@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
@@ -96,7 +96,7 @@ export default function AdminAnalytics() {
       <main className="pt-24 px-6 max-w-4xl mx-auto space-y-8">
         <header>
           <h1 className="font-headline font-black text-3xl tracking-tighter leading-none">Dashboard Executivo</h1>
-          <p className="text-on-surface-variant text-sm font-medium mt-1">Acompanhe a saúde do Skema Beach Club em tempo real.</p>
+          <p className="text-on-surface-variant text-sm font-medium mt-1">Acompanhe a saúde do PAPEL FUTEVÔLEI Beach Club em tempo real.</p>
         </header>
 
         {/* Stats Grid */}

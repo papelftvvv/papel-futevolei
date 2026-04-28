@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import TeacherNavbar from '../components/TeacherNavbar';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export default function TeacherDashboard() {
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando painel...</div>;
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="pb-32 min-h-screen font-body relative text-on-surface">
       <TopAppBar
         title={`Painel do Prof. ${firstName}`}
@@ -170,7 +170,7 @@ export default function TeacherDashboard() {
           <div className="flex justify-between items-end">
             <div>
                 <h3 className="font-headline text-xl font-black">Alunos Recentes</h3>
-                <p className="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">Base de dados Skema</p>
+                <p className="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">Base de dados PAPEL FUTEVÔLEI</p>
             </div>
             <button 
                 onClick={() => navigate('/admin/students')}
@@ -214,6 +214,6 @@ export default function TeacherDashboard() {
 
       <TeacherNavbar activePage="home" />
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MarketingMessage {
@@ -112,7 +112,7 @@ export default function ManageMarketing() {
                 title: pushTitle,
                 message: pushMessage
             });
-            alert('🚀 Notificação disparada com sucesso!');
+            alert('ðŸš€ Notificação disparada com sucesso!');
             setPushTitle('');
             setPushMessage('');
         } catch (error: any) {
@@ -123,7 +123,7 @@ export default function ManageMarketing() {
     }
 
     return (
-        <WavyBackground topHeight="25%">
+        <SportyBackground topHeight="25%">
             <div className="pb-32 min-h-screen font-body relative">
                 <TopAppBar title="ADMIN: MARKETING" />
 
@@ -158,7 +158,7 @@ export default function ManageMarketing() {
                                 className="w-full h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
                             >
                                 <span className="material-symbols-outlined text-sm font-black">rocket_launch</span>
-                                {sendingPush ? 'ENVIANDO...' : '🚀 DISPARAR PARA TODOS OS ALUNOS'}
+                                {sendingPush ? 'ENVIANDO...' : 'ðŸš€ DISPARAR PARA TODOS OS ALUNOS'}
                             </button>
                         </div>
                     </section>
@@ -229,7 +229,7 @@ export default function ManageMarketing() {
                                             value={currentMsg.title} 
                                             onChange={e => setCurrentMsg({...currentMsg, title: e.target.value.toUpperCase()})}
                                             className="w-full h-12 bg-surface rounded-2xl px-4 font-bold text-sm outline-none border-2 border-transparent focus:border-secondary transition-all"
-                                            placeholder="EX: NOVIDADE SKEMA"
+                                            placeholder="EX: NOVIDADE PAPEL FUTEVÔLEI"
                                         />
                                     </div>
                                     <div className="space-y-1">
@@ -243,7 +243,7 @@ export default function ManageMarketing() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase text-secondary/60 ml-2 tracking-widest">Ícone (Google Symbols)</label>
+                                            <label className="text-[9px] font-black uppercase text-secondary/60 ml-2 tracking-widest">Ãcone (Google Symbols)</label>
                                             <input 
                                                 value={currentMsg.icon} 
                                                 onChange={e => setCurrentMsg({...currentMsg, icon: e.target.value})}
@@ -281,6 +281,6 @@ export default function ManageMarketing() {
                     )}
                 </AnimatePresence>
             </div>
-        </WavyBackground>
+        </SportyBackground>
     );
 }

@@ -14,11 +14,11 @@ export default defineConfig(({mode}) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         manifest: {
-          name: 'Skema Beach Club',
-          short_name: 'Skema',
-          description: 'Portal oficial do Skema Beach Club - Futevôlei, Aluguéis e Lazer.',
-          theme_color: '#006971',
-          background_color: '#ffffff',
+          name: 'Papel Futevôlei',
+          short_name: 'Papel Futevôlei',
+          description: 'Portal oficial do Papel Futevôlei - Aluguéis, Aulas e Lazer.',
+          theme_color: '#000000',
+          background_color: '#000000',
           display: 'standalone',
           icons: [
             {

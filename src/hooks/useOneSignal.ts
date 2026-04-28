@@ -35,7 +35,7 @@ export function useOneSignal(userId: string | undefined) {
         setDebugStatus(statusMsg);
 
         if (showDebug) {
-            alert(`[DIAGNÓSTICO SKEMA]\n${statusMsg}\nID: ${pushId ? 'Sincronizado' : 'Faltando'}`);
+            alert(`[DIAGNÓSTICO PAPEL FUTEVÔLEI]\n${statusMsg}\nID: ${pushId ? 'Sincronizado' : 'Faltando'}`);
         }
         
         if (hasPermission === true && isPushEnabled === true && pushId && userId) {

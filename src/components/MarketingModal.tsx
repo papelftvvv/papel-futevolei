@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,7 +37,7 @@ export default function MarketingModal({ isOpen, onClose, message }: MarketingMo
                         transition={{ type: 'spring', damping: 20, stiffness: 250 }}
                         className="relative bg-white w-full max-w-sm rounded-[42px] overflow-hidden shadow-2xl border-4 border-white"
                     >
-                        {/* Header com Ícone Gigante */}
+                        {/* Header com Ãcone Gigante */}
                         <div className="bg-secondary p-10 flex flex-col items-center justify-center relative overflow-hidden">
                             <div className="absolute inset-0 opacity-10">
                                 <span className="material-symbols-outlined text-[150px] absolute -right-10 -bottom-10 rotate-12">{message.icon}</span>

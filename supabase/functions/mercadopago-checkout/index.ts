@@ -54,7 +54,7 @@ serve(async (req) => {
       const { data: dayUse } = await supabaseAdmin.from('day_use_bookings').select('*').eq('id', booking_id).single()
       if (!dayUse) throw new Error("Reserva de Day Use não encontrada")
       amount = Number(dayUse.price)
-      title = `Day Use - Skema Beach Club`
+      title = `Day Use - Papel Futevôlei`
     }
 
     const MP_ACCESS_TOKEN = Deno.env.get('MERCADOPAGO_ACCESS_TOKEN')
@@ -90,6 +90,13 @@ serve(async (req) => {
         success: `${req.headers.get('origin')}/student?payment=success`,
         failure: `${req.headers.get('origin')}/student?payment=failure`,
         pending: `${req.headers.get('origin')}/student?payment=pending`
+      },
+      payment_methods: {
+        excluded_payment_types: [
+          { id: "ticket" }, // Exclui Boleto Bancário
+          { id: "atm" }    // Exclui Pagamento em Lotérica
+        ],
+        installments: 12, // Permite parcelamento no cartão
       },
       auto_return: 'approved',
       notification_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mercadopago-webhook`,

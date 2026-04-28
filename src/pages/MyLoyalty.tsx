@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { QRCodeSVG } from 'qrcode.react';
 import TopAppBar from '../components/TopAppBar';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -181,10 +181,10 @@ export default function MyLoyalty() {
         : rewards;
 
     return (
-        <WavyBackground topHeight="25%" bgColor="bg-surface" dividerColor="fill-surface">
+        <SportyBackground topHeight="25%" bgColor="bg-surface" dividerColor="fill-surface">
             <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/20">
                 <TopAppBar 
-                    title="SKEMA POINTS" 
+                    title="PAPEL FUTEVÔLEI POINTS" 
                     showBackButton 
                     avatarSrc={profile?.avatar_url}
                     avatarAlt={profile?.full_name}
@@ -310,7 +310,7 @@ export default function MyLoyalty() {
                             >
                                 <div className="text-center space-y-1">
                                     <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase">Extrato de Pontos</h3>
-                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Sua evolução no Skema</p>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Sua evolução no PAPEL FUTEVÔLEI</p>
                                 </div>
 
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 custom-scrollbar pr-2">
@@ -415,7 +415,7 @@ export default function MyLoyalty() {
                                 className="bg-surface w-full max-w-sm rounded-t-[50px] sm:rounded-[50px] p-8 shadow-2xl relative z-10 text-center space-y-6"
                             >
                                 <div className="space-y-2">
-                                    <h3 className="font-headline font-black text-3xl text-on-surface uppercase tracking-tight">Cupom Gerado! 🏆</h3>
+                                    <h3 className="font-headline font-black text-3xl text-on-surface uppercase tracking-tight">Cupom Gerado! ðŸ†</h3>
                                     <p className="text-on-surface-variant text-[10px] font-black uppercase tracking-[0.2em]">{selectedReward.name}</p>
                                 </div>
 
@@ -454,6 +454,6 @@ export default function MyLoyalty() {
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 105, 113, 0.1); border-radius: 10px; }
             `}</style>
-        </WavyBackground>
+        </SportyBackground>
     );
 }

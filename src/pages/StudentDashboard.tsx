@@ -3,7 +3,7 @@ import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import MarketingModal from '../components/MarketingModal';
 import PWAInstallPrompt from '../components/PWAInstallPrompt';
@@ -62,7 +62,23 @@ export default function StudentDashboard() {
       try {
         setLoading(true);
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return navigate('/');
+        
+        // Prototype Mode: If no user, use a demo profile
+        if (!user) {
+          setProfile({
+            full_name: 'Usuário Demo',
+            avatar_url: null,
+            plan_status: 'ativo',
+            remaining_checkins: 5,
+            plan: { name: 'Plano Pro', classes_per_week: 8, billing_cycle: 'mensal' }
+          });
+          setBookings([]);
+          setCourtRentals([]);
+          setDayUseBookings([]);
+          setWeeklyBookingsCount(5);
+          setLoading(false);
+          return;
+        }
 
         const { data: profileData } = await supabase
           .from('profiles')
@@ -169,7 +185,7 @@ export default function StudentDashboard() {
                 title: 'Acesso ao Clube',
                 startTime: new Date(`${d.day_use_offers?.offer_date}T${d.day_use_offers?.start_time}`),
                 endTime: new Date(`${d.day_use_offers?.offer_date}T${d.day_use_offers?.end_time}`),
-                location: 'Skema Beach Club',
+                location: 'PAPEL FUTEVÔLEI Beach Club',
                 icon: 'wb_sunny',
                 color: 'bg-orange-100 text-orange-600',
                 raw: d
@@ -198,7 +214,7 @@ export default function StudentDashboard() {
   useEffect(() => {
      async function checkMarketing() {
          try {
-             const lastShow = localStorage.getItem('skema_last_marketing_show');
+             const lastShow = localStorage.getItem('PAPEL FUTEVÔLEI_last_marketing_show');
              const today = new Date().toISOString().split('T')[0];
 
              if (lastShow !== today) {
@@ -212,7 +228,7 @@ export default function StudentDashboard() {
                      const randomMsg = data[Math.floor(Math.random() * data.length)];
                      setMarketingMessage(randomMsg);
                      setIsMarketingModalOpen(true);
-                     localStorage.setItem('skema_last_marketing_show', today);
+                     localStorage.setItem('PAPEL FUTEVÔLEI_last_marketing_show', today);
                  }
              }
          } catch (e) {
@@ -467,7 +483,7 @@ export default function StudentDashboard() {
         return;
       }
 
-      if (!confirm(`Confirmar futevôlei às ${new Date(cls.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}?`)) return;
+      if (!confirm(`Confirmar futevôlei Ã s ${new Date(cls.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}?`)) return;
 
       // 1. Verificar se já existe QUALQUER registro (inclusive cancelado)
       const { data: existingAll } = await supabase
@@ -709,12 +725,12 @@ export default function StudentDashboard() {
 
   const capitalizedMonth = selectedDate.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, (c) => c.toUpperCase());
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal Skema...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal PAPEL FUTEVÔLEI...</div>;
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="pb-32 min-h-screen font-body relative">
-        <TopAppBar title="SKEMA BEACH CLUB" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
+        <TopAppBar title="PAPEL FUTEVÔLEI BEACH CLUB" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
 
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8">
           {/* 1. Welcome Header & Vagas */}
@@ -722,7 +738,7 @@ export default function StudentDashboard() {
             <div>
               <h2 className="font-headline font-extrabold text-4xl tracking-tight leading-tight">Olá, {firstName}!</h2>
               <p className="text-white/70 font-medium mt-1 uppercase text-[10px] tracking-widest leading-none">
-                  {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? '∞' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
+                  {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? 'âˆž' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
               </p>
             </div>
             {profile?.plan && profile.plan.classes_per_week < 99 && (
@@ -742,7 +758,7 @@ export default function StudentDashboard() {
               <div className="flex justify-between items-center relative z-10">
                   <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]/80">Seu Programa de Fidelidade</p>
-                      <h3 className="font-headline font-black text-2xl text-white uppercase italic tracking-tighter">SKEMA <span className="text-[#D4AF37]">POINTS</span></h3>
+                      <h3 className="font-headline font-black text-2xl text-white uppercase italic tracking-tighter">PAPEL FUTEVÔLEI <span className="text-[#D4AF37]">POINTS</span></h3>
                       <div className="flex items-center gap-2 text-[#D4AF37]">
                           <span className="material-symbols-outlined text-sm font-bold">celebration</span>
                           <p className="text-[10px] font-bold uppercase tracking-widest leading-none">Resgate prêmios exclusivos</p>
@@ -849,7 +865,7 @@ export default function StudentDashboard() {
                               <div className="flex-1">
                                   <h5 className="font-headline font-black text-on-surface leading-tight uppercase text-sm">{rental.court_name}</h5>
                                   <p className="text-xs font-bold text-on-surface-variant tracking-tight mt-0.5">
-                                      {new Date(rental.rental_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • {rental.start_time.slice(0, 5)} às {rental.end_time.slice(0, 5)}
+                                      {new Date(rental.rental_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • {rental.start_time.slice(0, 5)} Ã s {rental.end_time.slice(0, 5)}
                                   </p>
                               </div>
                               <div className="text-right">
@@ -882,7 +898,7 @@ export default function StudentDashboard() {
                                   <h5 className="font-headline font-black text-on-surface leading-tight uppercase text-sm">DAY USE</h5>
                                   <p className="text-xs font-bold text-on-surface-variant tracking-tight mt-0.5">
                                       {booking.day_use_offers ? (
-                                          `${new Date(booking.day_use_offers.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • ${booking.day_use_offers.start_time.slice(0,5)} às ${booking.day_use_offers.end_time.slice(0,5)}`
+                                          `${new Date(booking.day_use_offers.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • ${booking.day_use_offers.start_time.slice(0,5)} Ã s ${booking.day_use_offers.end_time.slice(0,5)}`
                                       ) : 'Data não definida'}
                                   </p>
                               </div>
@@ -950,7 +966,7 @@ export default function StudentDashboard() {
                     return (
                         <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'bg-secondary text-white shadow-md scale-105' : 'text-on-surface-variant'}`}>
                             <span className="text-[9px] font-black uppercase tracking-tighter">
-                                {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][date.getDay()]}
+                                {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÃB'][date.getDay()]}
                             </span>
                             <span className="text-sm font-black">{date.getDate()}</span>
                         </button>
@@ -1028,7 +1044,7 @@ export default function StudentDashboard() {
                                 <h3 className="font-headline font-black text-3xl text-on-surface uppercase">{selectedRental.court_name}</h3>
                             </div>
                             <div className="text-right">
-                                <h4 className="font-headline font-black text-secondary text-lg leading-none">{selectedRental.start_time.slice(0, 5)} às {selectedRental.end_time.slice(0, 5)}</h4>
+                                <h4 className="font-headline font-black text-secondary text-lg leading-none">{selectedRental.start_time.slice(0, 5)} Ã s {selectedRental.end_time.slice(0, 5)}</h4>
                                 <p className="text-[10px] font-bold text-on-surface-variant uppercase">{new Date(selectedRental.rental_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })}</p>
                             </div>
                         </div>
@@ -1038,7 +1054,7 @@ export default function StudentDashboard() {
                             <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface/50">Time Convocado</h4>
                             <div className="space-y-3">
                                 <div className="flex items-center gap-4 bg-surface p-4 rounded-2xl border border-primary-container/5 relative overflow-hidden">
-                                    <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black">⭐</div>
+                                    <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black">â­</div>
                                     <span className="font-bold text-sm uppercase flex-1">{profile.full_name} (Você)</span>
                                     <span className="text-[9px] font-black uppercase text-secondary/60">Capitão</span>
                                 </div>
@@ -1134,7 +1150,7 @@ export default function StudentDashboard() {
                         </div>
 
                         <div className="space-y-6">
-                            <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface/50">Quem vai estar lá ☀️</h4>
+                            <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface/50">Quem vai estar lá â˜€ï¸</h4>
                             <div className="space-y-3">
                                 {dayUseParticipants.length > 0 ? dayUseParticipants.map((p, idx) => (
                                     <div key={idx} className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-primary-container/10 shadow-sm">
@@ -1242,7 +1258,7 @@ export default function StudentDashboard() {
                     >
                         <div className="text-center space-y-1">
                             <div className="w-12 h-1.5 bg-surface-container rounded-full mx-auto mb-4 opacity-20" />
-                            <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase leading-none">QUEM VAI TREINAR? 🏐</h3>
+                            <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase leading-none">QUEM VAI TREINAR? ðŸ</h3>
                             <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{roster.className}</p>
                         </div>
 
@@ -1312,7 +1328,7 @@ export default function StudentDashboard() {
                         <div className="space-y-2">
                             <h3 className="font-headline font-black text-2xl uppercase italic leading-none">
                                 {paymentStatus === 'success' ? 'PAGAMENTO APROVADO!' : 
-                                 paymentStatus === 'failure' ? 'PAGAMENTO FALHOU' : 'PAGAMENTO EM ANÁLISE'}
+                                 paymentStatus === 'failure' ? 'PAGAMENTO FALHOU' : 'PAGAMENTO EM ANÃLISE'}
                             </h3>
                             <p className="text-xs font-bold text-on-surface-variant uppercase tracking-tighter">
                                 {paymentStatus === 'success' ? 'Sua reserva foi confirmada automaticamente. Divirta-se!' : 
@@ -1333,6 +1349,6 @@ export default function StudentDashboard() {
       </div>
 
       <PWAInstallPrompt />
-    </WavyBackground>
+    </SportyBackground>
   );
 }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { useNavigate } from 'react-router-dom';
 
 export default function UpdatePassword() {
@@ -52,7 +52,7 @@ export default function UpdatePassword() {
     };
 
     return (
-        <WavyBackground topHeight="40%">
+        <SportyBackground topHeight="40%">
             <div className="flex flex-col relative min-h-screen pt-12 px-8">
                 <main className="relative z-20 flex-grow flex flex-col items-center max-w-sm mx-auto w-full">
                     <div className="mb-8 text-center text-white">
@@ -114,6 +114,6 @@ export default function UpdatePassword() {
                     </div>
                 </main>
             </div>
-        </WavyBackground>
+        </SportyBackground>
     );
 }

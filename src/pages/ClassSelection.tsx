@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -254,7 +254,7 @@ export default function ClassSelection() {
   const weekDays = getWeekDays();
 
   return (
-    <WavyBackground topHeight="20%">
+    <SportyBackground topHeight="20%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden text-sm">
       <TopAppBar 
         title="CHECK-IN" 
@@ -267,7 +267,7 @@ export default function ClassSelection() {
         <section className="space-y-1">
             <div className="flex items-center gap-2 text-secondary font-bold text-[10px] uppercase tracking-[0.2em]">
                 <span className="material-symbols-outlined text-sm">wb_sunny</span>
-                {profile?.plan ? (profile.plan.classes_per_week >= 99 ? 'Aulas Ilimitadas ∞' : `${weeklyBookingsCount}/${profile.plan.classes_per_week} aulas no ${profile.plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`) : 'Vagas Disponíveis'}
+                {profile?.plan ? (profile.plan.classes_per_week >= 99 ? 'Aulas Ilimitadas âˆž' : `${weeklyBookingsCount}/${profile.plan.classes_per_week} aulas no ${profile.plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`) : 'Vagas Disponíveis'}
             </div>
             <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende seu <span className="text-secondary">Treino</span></h2>
         </section>
@@ -329,7 +329,7 @@ export default function ClassSelection() {
                           <div>
                             <p className="text-[10px] font-extrabold text-secondary uppercase tracking-[0.15em] mb-0.5">{cls.court}</p>
                             <h4 className="font-headline font-black text-xl text-on-surface leading-tight tracking-tight">{cls.name}</h4>
-                            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">Prof. {cls.teacher?.full_name || 'Skema'}</p>
+                            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">Prof. {cls.teacher?.full_name || 'PAPEL FUTEVÔLEI'}</p>
                           </div>
                         </div>
                         
@@ -399,7 +399,7 @@ export default function ClassSelection() {
                     className="relative bg-surface w-full max-w-sm rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl space-y-6"
                 >
                     <div className="text-center space-y-1">
-                        <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase">QUEM VAI TREINAR? 🏐</h3>
+                        <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase">QUEM VAI TREINAR? ðŸ</h3>
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{roster.className}</p>
                     </div>
 
@@ -426,7 +426,7 @@ export default function ClassSelection() {
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="py-10 text-center text-on-surface-variant/40 font-medium italic text-xs px-10">Você será o primeiro desta turma! Agende e inspire outros. ✨</div>
+                            <div className="py-10 text-center text-on-surface-variant/40 font-medium italic text-xs px-10">Você será o primeiro desta turma! Agende e inspire outros. âœ¨</div>
                         )}
                     </div>
 
@@ -451,6 +451,6 @@ export default function ClassSelection() {
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 105, 113, 0.1); border-radius: 10px; }
       `}</style>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

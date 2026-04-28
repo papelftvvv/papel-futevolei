@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 
 export default function AdminDashboard() {
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="min-h-screen pb-32 font-body relative">
       <TopAppBar title="PAINEL ADMINISTRATIVO" />
 
@@ -59,12 +59,12 @@ export default function AdminDashboard() {
             </button>
             <button onClick={handleLogout} className="w-full h-14 bg-white rounded-xl font-bold flex items-center px-6 gap-3 shadow-sm active:scale-95 transition-transform text-error text-sm">
               <span className="material-symbols-outlined">logout</span>
-              Sair do App
+              Sair
             </button>
           </div>
         </section>
       </main>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

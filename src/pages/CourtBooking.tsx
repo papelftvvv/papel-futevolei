@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,7 +32,7 @@ export default function CourtBooking() {
   const [showCPFModal, setShowCPFModal] = useState(false);
   const [courtPrice, setCourtPrice] = useState(60);
 
-  // Horários de funcionamento: 08:00 às 22:00
+  // Horários de funcionamento: 08:00 Ã s 22:00
   const hours = Array.from({ length: 15 }, (_, i) => i + 8);
 
   useEffect(() => {
@@ -244,7 +244,7 @@ export default function CourtBooking() {
   }
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-48 font-body selection:bg-primary/30 relative overflow-hidden">
         <TopAppBar title="ALUGUEL DE QUADRA" showBackButton />
 
@@ -253,7 +253,7 @@ export default function CourtBooking() {
           <section className="space-y-1">
             <div className="flex items-center gap-2 text-secondary font-bold text-[10px] uppercase tracking-[0.2em]">
               <span className="material-symbols-outlined text-sm">stadium</span>
-              RESIDENCIAL SKEMA
+              RESIDENCIAL PAPEL FUTEVÔLEI
             </div>
             <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende sua <span className="text-secondary">Quadra</span></h2>
             <p className="text-on-surface-variant text-sm font-medium">Valor: R$ {courtPrice},00 por hora</p>
@@ -349,7 +349,7 @@ export default function CourtBooking() {
 
               <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20">
                   <p className="text-[10px] font-bold text-primary leading-relaxed uppercase tracking-widest text-center italic">
-                      "Participantes que não forem incluídos na lista acima não receberão o crédito automático de pontos no Skema Points."
+                      "Participantes que não forem incluídos na lista acima não receberão o crédito automático de pontos no PAPEL FUTEVÔLEI Points."
                   </p>
               </div>
           </section>
@@ -400,7 +400,7 @@ export default function CourtBooking() {
                         <span className="material-symbols-outlined font-black">stars</span>
                     </div>
                     <div>
-                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest">Skema Points Bônus</p>
+                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest">PAPEL FUTEVÔLEI Points Bônus</p>
                         <p className="text-sm font-black text-on-surface leading-tight">
                             {selectedSlots.length * pointsPerHour} pontos <span className="text-on-surface-variant font-medium text-[11px] normal-case">para cada jogador!</span>
                         </p>
@@ -440,6 +440,6 @@ export default function CourtBooking() {
           }
         `}</style>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

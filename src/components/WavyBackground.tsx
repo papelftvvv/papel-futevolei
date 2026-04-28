@@ -1,18 +1,18 @@
-import React from 'react';
+﻿import React from 'react';
 
-interface WavyBackgroundProps {
+interface SportyBackgroundProps {
   children: React.ReactNode;
   topHeight?: string; // e.g. "30%", "40vh"
   bgColor?: string;
   dividerColor?: string;
 }
 
-export default function WavyBackground({ 
+export default function SportyBackground({ 
   children, 
   topHeight = "35%", 
   bgColor = "bg-surface", 
   dividerColor = "fill-surface" 
-}: WavyBackgroundProps) {
+}: SportyBackgroundProps) {
   return (
     <div className={`relative min-h-screen w-full font-body text-on-surface overflow-x-hidden ${bgColor}`}>
       {/* Top Teal Section */}
@@ -21,7 +21,7 @@ export default function WavyBackground({
         style={{ height: topHeight }}
       ></div>
 
-      {/* Wavy Divider - Preenchimento igual à bg-surface (cor areia) */}
+      {/* Wavy Divider - Preenchimento igual Ã  bg-surface (cor areia) */}
       <div 
         className="absolute left-0 w-full transform -translate-y-1/2 z-10"
         style={{ top: topHeight }}

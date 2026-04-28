@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { notifyAdmin } from '../lib/notifications';
@@ -164,7 +164,7 @@ export default function DayUse() {
   const selectedOfferData = offers.find(o => o.id === selectedOffer);
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
         <TopAppBar title="DAY USE" showBackButton />
 
@@ -185,12 +185,12 @@ export default function DayUse() {
               <h3 className="font-headline font-black text-sm uppercase tracking-widest">Como funciona o Day Use?</h3>
             </div>
             <p className="text-xs text-on-surface-variant font-medium leading-relaxed">
-              Para fazer parte de um Day Use no Skema, você pagará um valor único e terá acesso à quadra para jogar com os participantes que também fazem parte desse Day Use.
+              Para fazer parte de um Day Use no PAPEL FUTEVÔLEI, você pagará um valor único e terá acesso Ã  quadra para jogar com os participantes que também fazem parte desse Day Use.
             </p>
             <ul className="space-y-2">
               {[
                 'Acontece o rodízio entre os jogadores na quadra',
-                'Você paga um único valor e terá acesso à quadra durante o horário estimado',
+                'Você paga um único valor e terá acesso Ã  quadra durante o horário estimado',
                 'Não existem reservas individuais para quadra com a sua turma, nem horário específico para grupos',
                 'Todos os atletas podem jogar em conjunto e também em categorias mistas'
               ].map((item, i) => (
@@ -226,7 +226,7 @@ export default function DayUse() {
                                 {new Date(off.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
                             </h3>
                             <p className={`text-xs font-bold ${selectedOffer === off.id ? 'text-white/60' : 'text-on-surface-variant'}`}>
-                                {off.start_time.slice(0,5)} às {off.end_time.slice(0,5)}
+                                {off.start_time.slice(0,5)} Ã s {off.end_time.slice(0,5)}
                             </p>
                         </div>
                         <div className="text-right">
@@ -284,6 +284,6 @@ export default function DayUse() {
           }
         `}</style>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

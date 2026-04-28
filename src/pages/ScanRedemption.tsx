@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface Redemption {
     id: string;
@@ -164,7 +164,7 @@ export default function ScanRedemption() {
     };
 
     return (
-        <WavyBackground topHeight="25%">
+        <SportyBackground topHeight="25%">
             <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
                 <TopAppBar title="CAIXA - SCANNER DE RESGATE" showBackButton />
 
@@ -179,7 +179,7 @@ export default function ScanRedemption() {
                         <div className="bg-white p-6 rounded-[40px] shadow-2xl border-2 border-primary-container/10">
                             <div id="reader" className="overflow-hidden rounded-3xl"></div>
                             <p className="mt-4 text-center text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-60">
-                                Centralize o QR Code na câmera
+                                Centralize o QR Code na cÃ¢mera
                             </p>
                         </div>
                     )}
@@ -275,6 +275,6 @@ export default function ScanRedemption() {
                     )}
                 </main>
             </div>
-        </WavyBackground>
+        </SportyBackground>
     );
 }

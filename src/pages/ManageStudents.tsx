@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 
@@ -185,7 +185,7 @@ export default function ManageStudents() {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `alunos_skema_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `alunos_PAPEL FUTEVÔLEI_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -409,7 +409,7 @@ export default function ManageStudents() {
                                 <h4 className="font-headline font-black text-4xl text-[#D4AF37] tracking-tighter italic">
                                     {(students.find(s => s.id === managingPoints.id)?.loyalty_points as any)?.balance || 0}
                                 </h4>
-                                <p className="text-[10px] font-bold text-[#D4AF37]/60 uppercase">Skema Points</p>
+                                <p className="text-[10px] font-bold text-[#D4AF37]/60 uppercase">PAPEL FUTEVÔLEI Points</p>
                             </div>
                         </div>
 

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { motion } from 'framer-motion';
 
 interface RankingUser {
@@ -58,10 +58,10 @@ export default function Ranking() {
   const currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
   const capitalizedMonth = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Calculando Pódio Skema...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Calculando Pódio PAPEL FUTEVÔLEI...</div>;
 
   return (
-    <WavyBackground topHeight="20%">
+    <SportyBackground topHeight="20%">
       <div className="pb-32 min-h-screen font-body relative">
         <TopAppBar title="RANKING MENSAL" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
 
@@ -171,7 +171,7 @@ export default function Ranking() {
                     );
                 }) : (
                     <div className="p-10 text-center text-on-surface-variant/40 italic font-medium uppercase text-xs tracking-widest leading-loose">
-                        Continue treinando para aparecer aqui! <br/> Os pontos resetam todo dia 1º.
+                        Continue treinando para aparecer aqui! <br/> Os pontos resetam todo dia 1Âº.
                     </div>
                 )}
             </div>
@@ -191,6 +191,6 @@ export default function Ranking() {
 
         <StudentNavbar activePage="ranking" />
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

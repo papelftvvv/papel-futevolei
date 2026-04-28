@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface Reward {
   id: string;
@@ -190,7 +190,7 @@ export default function ManageLoyalty() {
   }
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
         <TopAppBar title="GESTÃO DE FIDELIDADE" showBackButton />
 
@@ -297,7 +297,7 @@ export default function ManageLoyalty() {
                     <div className="col-span-2">
                       <label className="text-[10px] font-black text-on-surface-variant uppercase ml-2">Nome</label>
                       <input 
-                        placeholder="Ex: Água Mineral 500ml"
+                        placeholder="Ex: Ãgua Mineral 500ml"
                         value={newReward.name}
                         onChange={e => setNewReward({...newReward, name: e.target.value})}
                         className="w-full bg-surface-container border-none rounded-xl font-bold text-secondary"
@@ -356,7 +356,7 @@ export default function ManageLoyalty() {
           {/* Points Configuration Section */}
           <section className="pt-12 space-y-6">
             <div className="space-y-1 border-t-2 border-primary-container/10 pt-12">
-               <h3 className="font-headline text-3xl font-black tracking-tighter text-on-surface">💰 Gestão de <span className="text-primary">Pontuação</span></h3>
+               <h3 className="font-headline text-3xl font-black tracking-tighter text-on-surface">ðŸ’° Gestão de <span className="text-primary">Pontuação</span></h3>
                <p className="text-on-surface-variant text-sm font-medium">Defina quantos pontos o aluno ganha por cada ação.</p>
             </div>
 
@@ -398,6 +398,6 @@ export default function ManageLoyalty() {
           </section>
         </main>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface CourtRental {
   id: string;
@@ -349,7 +349,7 @@ export default function ManageLeisure() {
   }
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
         <TopAppBar title="GESTÃO DE LAZER" showBackButton />
 
@@ -579,7 +579,7 @@ export default function ManageLeisure() {
                                         <div>
                                             <p className="text-[10px] font-black text-secondary uppercase italic">{new Date(off.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
                                             <h5 className="font-headline font-black text-lg text-on-surface">{new Date(off.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}</h5>
-                                            <p className="text-xs font-bold text-on-surface-variant">{off.start_time.slice(0,5)} às {off.end_time.slice(0,5)} • R$ {off.price}</p>
+                                            <p className="text-xs font-bold text-on-surface-variant">{off.start_time.slice(0,5)} Ã s {off.end_time.slice(0,5)} • R$ {off.price}</p>
                                         </div>
                                         <div className="flex gap-2">
                                             <button onClick={() => { setManagingParticipants(off); fetchParticipants(off.id); }} className="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center hover:bg-secondary hover:text-white transition-all"><span className="material-symbols-outlined text-sm font-black">groups</span></button>
@@ -773,6 +773,6 @@ export default function ManageLeisure() {
             .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.05); border-radius: 10px; }
         `}</style>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

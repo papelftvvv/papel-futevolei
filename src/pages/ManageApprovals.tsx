@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface PendingApproval {
   id: string;
@@ -68,13 +68,13 @@ export default function ManageApprovals() {
           };
 
           if (planData) {
-            // Se for recorrente, trocamos o plano e a data âncora
+            // Se for recorrente, trocamos o plano e a data Ã¢ncora
             if (planData.type === 'recorrente') {
               updates.plan_id = planId;
               updates.plan_activated_at = new Date().toISOString();
               updates.remaining_checkins = Math.max(0, (app.remaining_checkins || 0) + planData.classes_per_week);
             } else {
-              // Se for avulso, apenas incrementamos o saldo (Skema Day)
+              // Se for avulso, apenas incrementamos o saldo (PAPEL FUTEVÔLEI Day)
               updates.remaining_checkins = Math.max(0, (app.remaining_checkins || 0) + 1);
             }
           }
@@ -113,7 +113,7 @@ export default function ManageApprovals() {
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando solicitações...</div>;
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="font-body text-on-surface antialiased min-h-screen pb-32 relative">
       <TopAppBar title="Aprovações de Planos" showBackButton />
 
@@ -169,6 +169,6 @@ export default function ManageApprovals() {
         )}
       </main>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

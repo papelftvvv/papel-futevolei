@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import TeacherNavbar from '../components/TeacherNavbar';
@@ -58,7 +58,7 @@ export default function CreateClass() {
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen pb-32">
       <TopAppBar 
-        title="SKEMA BEACH CLUB" 
+        title="PAPEL FUTEVÔLEI BEACH CLUB" 
         avatarSrc={profile?.avatar_url || undefined}
         showBackButton
       />

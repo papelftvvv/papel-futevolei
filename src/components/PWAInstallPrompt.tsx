@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -77,9 +77,9 @@ export default function PWAInstallPrompt() {
             </button>
             
             <div className="w-20 h-20 bg-white rounded-2xl shadow-lg mx-auto mb-4 flex items-center justify-center p-4 ring-4 ring-primary/10">
-              <img src="/icons/icon-192x192.png" alt="Skema Logo" className="w-full h-full object-contain" />
+              <img src="/icons/icon-192x192.png" alt="PAPEL FUTEVÔLEI Logo" className="w-full h-full object-contain" />
             </div>
-            <h3 className="font-headline font-black text-xl text-primary tracking-tight">Skema na sua Tela!</h3>
+            <h3 className="font-headline font-black text-xl text-primary tracking-tight">PAPEL FUTEVÔLEI na sua Tela!</h3>
             <p className="text-on-surface-variant text-sm font-medium mt-1">Acesse suas aulas mais rápido</p>
           </div>
 
@@ -101,7 +101,7 @@ export default function PWAInstallPrompt() {
                     <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-primary">
                       <span className="material-symbols-outlined">add_box</span>
                     </div>
-                    <p className="text-xs font-bold text-on-surface">2. Role para baixo e toque em <span className="text-primary italic">"Adicionar à Tela de Início"</span>.</p>
+                    <p className="text-xs font-bold text-on-surface">2. Role para baixo e toque em <span className="text-primary italic">"Adicionar Ã  Tela de Início"</span>.</p>
                   </div>
                 </div>
                 <button 
@@ -115,7 +115,7 @@ export default function PWAInstallPrompt() {
               /* Botão Android/Chrome */
               <div className="space-y-6 text-center">
                 <p className="text-sm text-on-surface-variant leading-relaxed px-4">
-                  Adicione o atalho do Skema Beach Club à sua tela inicial para um acesso instantâneo.
+                  Adicione o atalho do PAPEL FUTEVÔLEI Beach Club Ã  sua tela inicial para um acesso instantÃ¢neo.
                 </p>
                 <div className="flex flex-col gap-3">
                   <button 
@@ -137,7 +137,7 @@ export default function PWAInstallPrompt() {
           </div>
           
           <div className="bg-surface-container-lowest p-4 text-center border-t border-outline-variant/10">
-            <p className="text-[10px] text-outline font-bold uppercase tracking-widest">Experiência completa Skema FTV</p>
+            <p className="text-[10px] text-outline font-bold uppercase tracking-widest">Experiência completa PAPEL FUTEVÔLEI FTV</p>
           </div>
         </motion.div>
       </div>

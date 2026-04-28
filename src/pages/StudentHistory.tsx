@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -127,7 +127,7 @@ export default function StudentHistory() {
   };
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface font-body text-on-surface antialiased min-h-screen pb-32 relative selection:bg-primary/30">
       <TopAppBar 
         title="MEU HISTÓRICO" 
@@ -164,7 +164,7 @@ export default function StudentHistory() {
             <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-[10px] font-black">check</span>
             </div>
-            <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest leading-none">Skema Beach Club: Evolução Constante</span>
+            <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest leading-none">PAPEL FUTEVÔLEI Beach Club: Evolução Constante</span>
         </footer>
       </main>
 
@@ -187,7 +187,7 @@ export default function StudentHistory() {
                     className="relative bg-surface w-full max-w-sm rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl space-y-6"
                 >
                     <div className="text-center space-y-1">
-                        <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase">TREINO CONCLUÍDO! 🏆</h3>
+                        <h3 className="font-headline font-black text-2xl text-on-surface tracking-tight uppercase">TREINO CONCLUÃDO! ðŸ†</h3>
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
                            {new Date(selectedDay.date).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
                         </p>
@@ -223,6 +223,6 @@ export default function StudentHistory() {
 
       <StudentNavbar activePage="agenda" />
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

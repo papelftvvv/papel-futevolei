@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 
@@ -165,7 +165,7 @@ export default function ManagePlans() {
                   disabled={plan.classes_per_week >= 99}
                   onChange={e => setPlans(prev => prev.map(p => p.id === plan.id ? { ...p, classes_per_week: Number(e.target.value) } : p))}
                   type="number"
-                  placeholder="∞"
+                  placeholder="âˆž"
                   className="w-full h-12 px-4 rounded-xl bg-surface-container border-none focus:ring-2 focus:ring-primary/30 transition-all text-on-surface font-semibold disabled:opacity-50"
                 />
                 <button 
@@ -205,7 +205,7 @@ export default function ManagePlans() {
             </div>
             <h3 className="font-headline font-bold text-xl text-on-surface">{plan.name}</h3>
             <p className="text-on-surface-variant text-sm mt-1">
-                {plan.description || (plan.classes_per_week >= 99 ? 'Check-in Livre ∞' : `${plan.classes_per_week} aulas por ${plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`)}
+                {plan.description || (plan.classes_per_week >= 99 ? 'Check-in Livre âˆž' : `${plan.classes_per_week} aulas por ${plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`)}
             </p>
             <p className="mt-4 text-2xl font-black text-on-surface flex items-baseline gap-1">
                 R$ {plan.price}
@@ -331,7 +331,7 @@ export default function ManagePlans() {
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Regra de Check-in</span>
                                 <span className="text-lg font-black text-on-surface leading-tight">
-                                    {newPlan.classes_per_week >= 99 ? 'LIVRE ∞' : `${newPlan.classes_per_week || 0} Aulas por ${newPlan.billing_cycle === 'mensal' ? 'Mês' : 'Semana'}`}
+                                    {newPlan.classes_per_week >= 99 ? 'LIVRE âˆž' : `${newPlan.classes_per_week || 0} Aulas por ${newPlan.billing_cycle === 'mensal' ? 'Mês' : 'Semana'}`}
                                 </span>
                             </div>
                             <div className="flex gap-4">
@@ -355,7 +355,7 @@ export default function ManagePlans() {
                                     </div>
                                 </div>
                                 <div className="w-[140px]">
-                                    <label className="text-[9px] font-bold text-secondary uppercase tracking-widest pl-1 mb-1 block">Ciclo de Créditos ✨</label>
+                                    <label className="text-[9px] font-bold text-secondary uppercase tracking-widest pl-1 mb-1 block">Ciclo de Créditos âœ¨</label>
                                     <select
                                         value={newPlan.billing_cycle}
                                         onChange={e => setNewPlan(p => ({...p, billing_cycle: e.target.value as 'semanal' | 'mensal'}))}

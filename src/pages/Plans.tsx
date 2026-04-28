@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { notifyAdmin } from '../lib/notifications';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface Plan {
   id: string;
@@ -76,15 +76,15 @@ export default function Plans() {
     }
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase tracking-widest animate-pulse">Carregando Planos Skema...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase tracking-widest animate-pulse">Carregando Planos PAPEL FUTEVÔLEI...</div>;
 
   const recorrentes = plans.filter(p => p.type === 'recorrente');
   const avulsos = plans.filter(p => p.type === 'avulso');
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="font-body text-on-surface antialiased min-h-screen pb-32 relative">
-      <TopAppBar title="SKEMA BEACH CLUB" showBackButton />
+      <TopAppBar title="PAPEL FUTEVÔLEI BEACH CLUB" showBackButton />
 
       <main className="pt-24 px-6 max-w-2xl mx-auto relative overflow-hidden">
         <div className="absolute -right-16 top-32 opacity-5 pointer-events-none select-none">
@@ -169,6 +169,6 @@ export default function Plans() {
 
       <StudentNavbar activePage="perfil" />
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

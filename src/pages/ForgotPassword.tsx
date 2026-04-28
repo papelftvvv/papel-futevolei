@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 import { useNavigate } from 'react-router-dom';
 
 export default function ForgotPassword() {
@@ -29,12 +29,12 @@ export default function ForgotPassword() {
     };
 
     return (
-        <WavyBackground topHeight="40%">
+        <SportyBackground topHeight="40%">
             <div className="flex flex-col relative min-h-screen pt-12 px-8">
                 <main className="relative z-20 flex-grow flex flex-col items-center max-w-sm mx-auto w-full">
                     <div className="mb-8 text-center">
                         <h1 className="font-headline font-black text-3xl text-white tracking-widest uppercase">Recuperar Senha</h1>
-                        <p className="text-white/70 text-xs font-bold uppercase tracking-widest mt-2">Skema Beach Club</p>
+                        <p className="text-white/70 text-xs font-bold uppercase tracking-widest mt-2">PAPEL FUTEVÔLEI Beach Club</p>
                     </div>
 
                     <div className="bg-white p-8 rounded-[40px] shadow-2xl w-full space-y-6">
@@ -80,6 +80,6 @@ export default function ForgotPassword() {
                     </div>
                 </main>
             </div>
-        </WavyBackground>
+        </SportyBackground>
     );
 }

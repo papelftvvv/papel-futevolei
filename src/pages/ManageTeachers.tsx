@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
 
@@ -146,7 +146,7 @@ export default function ManageTeachers() {
                 disabled={isSubmitting}
                 className={`h-14 font-headline font-bold rounded-xl active:scale-95 transition-transform shadow-lg disabled:opacity-50 ${editingId ? 'flex-1 bg-secondary text-white' : 'w-full bg-primary text-white'}`}
               >
-                {isSubmitting ? 'SALVANDO...' : (editingId ? 'SALVAR ALTERAÇÕES' : 'CADASTRAR PROFESSOR')}
+                {isSubmitting ? 'SALVANDO...' : (editingId ? 'SALVAR ALTERAÇÃ•ES' : 'CADASTRAR PROFESSOR')}
               </button>
               {editingId && (
                 <button 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -72,33 +72,32 @@ export default function Login() {
   };
 
   return (
-    <WavyBackground topHeight="60%">
+    <SportyBackground>
       <div className="flex flex-col relative" style={{ minHeight: '100vh' }}>
 
-      <main className="relative z-20 flex-grow flex flex-col items-center px-8 pt-10">
-        {/* Logo & Header Section - Naturally Flowing in the Blue Area */}
-        <div className="flex flex-col items-center w-full mb-8">
+      <main className="relative z-20 flex-grow flex flex-col items-center px-8 pt-24">
+        {/* Logo & Header Section */}
+        <div className="flex flex-col items-center w-full mb-12">
             <motion.img
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ 
                 scale: 1, 
                 opacity: 1,
-                y: [0, -15, 0]
               }}
               transition={{ 
                 scale: { type: 'spring', damping: 20, stiffness: 100 },
-                y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                duration: 0.8
               }}
-              alt="Skema Mermaid"
-              className="w-80 h-80 object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)] mb-4"
-              src="/sereia.svg"
+              alt="Papel Futevôlei Logo"
+              className="w-64 h-64 object-contain mix-blend-screen mb-6"
+              src="/logo.png"
             />
             <header className="text-center">
-              <h1 className="font-headline font-black text-6xl tracking-[0.15em] leading-tight text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                SKEMA
+              <h1 className="font-headline font-black text-4xl tracking-[0.2em] leading-tight text-white uppercase italic">
+                PAPEL
               </h1>
-              <p className="text-sm font-black tracking-[0.5em] uppercase text-white drop-shadow-md mt-2">
-                BEACH CLUB
+              <p className="text-xs font-black tracking-[0.6em] uppercase text-white/60 mt-2">
+                FUTEVÔLEI
               </p>
             </header>
         </div>
@@ -116,13 +115,13 @@ export default function Login() {
               <div className="w-full space-y-4 pt-4">
                 <button
                   onClick={() => startLoginFlow('student')}
-                  className="w-full h-16 px-6 rounded-3xl font-headline font-bold text-on-surface bg-[#48D1E0] shadow-md hover:bg-[#3bc2d1] active:scale-95 transition-all text-base uppercase tracking-widest border border-white/20"
+                  className="w-full h-14 px-6 rounded-lg font-headline font-bold text-black bg-white shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:bg-white/90 active:scale-95 transition-all text-sm uppercase tracking-widest"
                 >
                   LOGIN ALUNO
                 </button>
                 <button
                   onClick={() => startLoginFlow('teacher')}
-                  className="w-full h-16 px-6 rounded-3xl font-headline font-bold text-white bg-[#EF7651] shadow-md hover:bg-[#d46545] active:scale-95 transition-all text-base uppercase tracking-widest border border-white/20"
+                  className="w-full h-14 px-6 rounded-lg font-headline font-bold text-white bg-transparent border border-white/20 hover:bg-white/5 active:scale-95 transition-all text-sm uppercase tracking-widest"
                 >
                   LOGIN PROFESSOR
                 </button>
@@ -137,16 +136,16 @@ export default function Login() {
               className="w-full max-w-xs space-y-4"
             >
               <div className="flex items-center mb-2">
-                <button onClick={() => setStep('splash')} className="text-on-surface-variant flex items-center text-xs font-bold uppercase tracking-wider">
+                <button onClick={() => setStep('splash')} className="text-white/60 flex items-center text-[10px] font-bold uppercase tracking-wider hover:text-white transition-colors">
                   <span className="material-symbols-outlined text-sm mr-1">arrow_back</span> Voltar
                 </button>
                 <span className="ml-auto text-[10px] font-bold uppercase tracking-widest opacity-40">
-                  Login {loginRole === 'student' ? 'Aluno' : 'Professor'}
+                  {loginRole === 'student' ? 'Aluno' : 'Professor'}
                 </span>
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-xl text-[10px] text-center font-bold">
+                <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-lg text-[10px] text-center font-bold">
                   {error}
                 </div>
               )}
@@ -157,7 +156,7 @@ export default function Login() {
                   placeholder="E-mail"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#48D1E0] transition-all placeholder:text-gray-300"
+                  className="w-full h-14 px-6 rounded-lg bg-white/5 border border-white/10 text-white shadow-sm focus:ring-1 focus:ring-white/30 focus:border-white/30 transition-all placeholder:text-white/20 outline-none"
                   required
                 />
                 <input
@@ -165,7 +164,7 @@ export default function Login() {
                   placeholder="Senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-[#48D1E0] transition-all placeholder:text-gray-300"
+                  className="w-full h-14 px-6 rounded-lg bg-white/5 border border-white/10 text-white shadow-sm focus:ring-1 focus:ring-white/30 focus:border-white/30 transition-all placeholder:text-white/20 outline-none"
                   required
                 />
               </div>
@@ -173,8 +172,7 @@ export default function Login() {
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                style={{ backgroundColor: loginRole === 'teacher' ? '#EF7651' : '#006971' }}
-                className="w-full py-4 px-6 rounded-2xl font-headline font-bold text-white shadow-lg hover:opacity-90 active:scale-95 transition-all text-sm uppercase tracking-widest disabled:opacity-50 mt-2"
+                className="w-full py-4 px-6 rounded-lg font-headline font-bold text-black bg-white shadow-lg hover:bg-white/90 active:scale-95 transition-all text-sm uppercase tracking-widest disabled:opacity-50 mt-2"
               >
                 {loading ? 'ENTRANDO...' : 'ENTRAR'}
               </button>
@@ -182,7 +180,7 @@ export default function Login() {
               <div className="text-center pt-4">
                 <Link 
                   to="/forgot-password" 
-                  className="text-[10px] font-black uppercase tracking-widest text-on-surface opacity-60 hover:opacity-100 transition-opacity"
+                  className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white/100 transition-all"
                 >
                   Esqueci minha senha
                 </Link>
@@ -192,13 +190,13 @@ export default function Login() {
         </AnimatePresence>
         </div>
 
-        <footer className="mt-4 text-center pb-4 relative z-20">
-          <p className="font-label font-medium text-sm text-on-surface">
-            Não tem conta? <Link to="/register" className="font-bold underline decoration-2 underline-offset-4 decoration-[#006971]/30">Cadastre-se</Link>
+        <footer className="mt-8 text-center pb-8 relative z-20">
+          <p className="font-label font-medium text-sm text-white/60">
+            Não tem conta? <Link to="/register" className="font-bold text-white underline underline-offset-8 decoration-white/20 hover:decoration-white transition-all">Cadastre-se</Link>
           </p>
         </footer>
       </main>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }

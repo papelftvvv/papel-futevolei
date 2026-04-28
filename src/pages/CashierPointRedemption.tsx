@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
-import WavyBackground from '../components/WavyBackground';
+import SportyBackground from '../components/SportyBackground';
 
 interface Profile {
   id: string;
@@ -100,7 +100,7 @@ export default function CashierPointRedemption() {
   }
 
   return (
-    <WavyBackground topHeight="25%">
+    <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
         <TopAppBar title="CAIXA - RESGATE DE PONTOS" showBackButton />
 
@@ -224,6 +224,6 @@ export default function CashierPointRedemption() {
           )}
         </main>
       </div>
-    </WavyBackground>
+    </SportyBackground>
   );
 }
