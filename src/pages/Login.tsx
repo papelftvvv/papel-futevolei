@@ -78,20 +78,23 @@ export default function Login() {
       <main className="relative z-20 flex-grow flex flex-col items-center px-8 pt-24">
         {/* Logo & Header Section */}
         <div className="flex flex-col items-center w-full mb-12">
-            <motion.img
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ 
-                scale: 1, 
-                opacity: 1,
-              }}
-              transition={{ 
-                scale: { type: 'spring', damping: 20, stiffness: 100 },
-                duration: 0.8
-              }}
-              alt="Papel Futevôlei Logo"
-              className="w-64 h-64 object-contain mix-blend-screen mb-6"
-              src="/logo.png"
-            />
+            <div style={{ mixBlendMode: 'screen' }} className="mb-6 flex justify-center w-full">
+              <motion.img
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ 
+                  scale: 1, 
+                  opacity: 1,
+                }}
+                transition={{ 
+                  scale: { type: 'spring', damping: 20, stiffness: 100 },
+                  duration: 0.8
+                }}
+                alt="Papel Futevôlei Logo"
+                className="w-64 h-64 object-contain"
+                style={{ filter: 'contrast(200%) grayscale(100%)' }}
+                src="/logo.png"
+              />
+            </div>
             <header className="text-center">
               <h1 className="font-headline font-black text-4xl tracking-[0.2em] leading-tight text-white uppercase italic">
                 PAPEL
