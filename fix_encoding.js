@@ -40,4 +40,4 @@ function walkDir(dir) {
     }
 }
 
-walkDir('c:\\Users\\marcos\\Downloads\\Skema-FTV\\src');
+walkDir('./src');

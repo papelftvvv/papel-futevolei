@@ -24,7 +24,7 @@ def fix_file(path):
     except Exception as e:
         print(f"Error fixing {path}: {e}")
 
-src_dir = 'c:\\Users\\marcos\\Downloads\\Skema-FTV\\src'
+src_dir = './src'
 for root, dirs, files in os.walk(src_dir):
     for file in files:
         if file.endswith('.tsx'):
