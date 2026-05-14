@@ -725,9 +725,9 @@ export default function StudentDashboard() {
           {/* 1. Welcome Header & Vagas */}
           <section className="flex justify-between items-start text-white">
             <div>
-              <h2 className="font-headline font-extrabold text-4xl tracking-tight leading-tight">Olá, {firstName}!</h2>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800 }} className="text-4xl leading-tight">Olá, {firstName}!</h2>
               <p className="text-white/70 font-medium mt-1 uppercase text-[10px] tracking-widest leading-none">
-                  {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? 'âˆž' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
+                  {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? '∞' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
               </p>
             </div>
             {profile?.plan && profile.plan.classes_per_week < 99 && (
@@ -883,11 +883,11 @@ export default function StudentDashboard() {
 
           {/* 5. Calendário & Horários de Aula */}
           <section className="space-y-8">
-            <div className="grid grid-cols-7 gap-2 bg-white p-4 rounded-[32px] shadow-sm border border-primary-container/10">
+            <div className="grid grid-cols-7 gap-1 bg-white p-3 rounded-[32px] shadow-sm border border-gray-100">
                 {weekDays.map((date, idx) => {
                     const isSelected = date.toDateString() === selectedDate.toDateString();
                     return (
-                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'bg-secondary text-white shadow-md scale-105' : 'text-on-surface-variant'}`}>
+                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'scale-105 shadow-md' : ''}`} style={isSelected ? { backgroundColor: '#006971', color: 'white' } : { color: '#555' }}>
                             <span className="text-[9px] font-black uppercase tracking-tighter">
                                 {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][date.getDay()]}
                             </span>
@@ -899,8 +899,8 @@ export default function StudentDashboard() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
-                <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant/40">Horários de Aula</h4>
-                <Link to="/book-class" className="text-[10px] font-black text-secondary flex items-center gap-1 uppercase tracking-widest">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
+                <h4 className="font-headline font-black text-sm uppercase tracking-widest" style={{ color: '#aaa' }}>Horários de Aula</h4>
+                <Link to="/book-class" className="text-[10px] font-black flex items-center gap-1 uppercase tracking-widest" style={{ color: '#006971' }}>Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
               </div>
               <div className="space-y-3">
                 {dayClasses.map(cls => {
