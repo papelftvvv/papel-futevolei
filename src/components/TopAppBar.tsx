@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface TopAppBarProps {
@@ -8,7 +8,7 @@ interface TopAppBarProps {
   showBackButton?: boolean;
 }
 
-const DEFAULT_AVATAR = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDmhvMLYsiOKVXKNDrsFAHFtQXzfVGjuEL_L_TFvjkqb4xgsa4YJY1QR4d4h4OrHdCHoimQsQbIBa3GEMNoxLA_7d4g869yio-XLYVQX5dQN918iHcV09zk3sLY9UMiuBA0r4IyQz9BQrj5H-wYlr9-2o47XdYieZeUNUyk_5YsTqEn-sph-dg7GURVuZv_qXosC38RVKd1DRmnGQO93KRLAQlZ_mgOOrihEYdy2u4cibsWaCIMWt7TNWjph8ae6yImGOh6aVpxP7PU';
+const DEFAULT_AVATAR = '/logo.png';
 
 export default function TopAppBar({ 
   title = 'PAPEL FUTEVÃ”LEI', 
