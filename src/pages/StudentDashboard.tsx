@@ -881,7 +881,78 @@ export default function StudentDashboard() {
             </div>
           </section>
 
-          {/* 5. Quadras Reservadas Section (WITH GESTÃO) */}
+          {/* 5. Calendário & Horários de Aula */}
+          <section className="space-y-8">
+            <div className="grid grid-cols-7 gap-2 bg-white p-4 rounded-[32px] shadow-sm border border-primary-container/10">
+                {weekDays.map((date, idx) => {
+                    const isSelected = date.toDateString() === selectedDate.toDateString();
+                    return (
+                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'bg-secondary text-white shadow-md scale-105' : 'text-on-surface-variant'}`}>
+                            <span className="text-[9px] font-black uppercase tracking-tighter">
+                                {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][date.getDay()]}
+                            </span>
+                            <span className="text-sm font-black">{date.getDate()}</span>
+                        </button>
+                    )
+                })}
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-2">
+                <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant/40">Horários de Aula</h4>
+                <Link to="/book-class" className="text-[10px] font-black text-secondary flex items-center gap-1 uppercase tracking-widest">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
+              </div>
+              <div className="space-y-3">
+                {dayClasses.map(cls => {
+                    const isPast = new Date(cls.start_time) < new Date();
+                    const isBooked = bookings.some(b => b.classes.id === cls.id && b.status === 'agendado');
+                    const bookedCount = (cls.bookings || []).filter((b: any) => b.status === 'agendado').length;
+                    const capacity = cls.capacity || 8;
+                    const isFull = bookedCount >= capacity;
+                    const waitlistCount = (cls.waitlist || []).filter((w: any) => w.status === 'waiting').length;
+                    const isUserInWaitlist = (cls.waitlist || []).some((w: any) => w.student_id === profile.id && w.status === 'waiting');
+
+                    return (
+                        <div key={cls.id} className={`bg-white p-5 rounded-[28px] border border-primary-container/10 shadow-sm flex items-center justify-between group transition-all ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
+                                <div 
+                                    onClick={() => fetchRoster(cls)}
+                                    className="cursor-pointer group flex items-center gap-4"
+                                >
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPast ? 'bg-surface-container-highest text-on-surface-variant/40' : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white'}`}>
+                                        <span className="material-symbols-outlined text-sm">groups</span>
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <h5 className={`font-headline font-bold text-sm uppercase leading-none ${isPast ? 'text-on-surface-variant/40' : 'text-on-surface'}`}>{new Date(cls.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {cls.name}</h5>
+                                            {bookedCount > 0 && (
+                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${isFull ? 'bg-error/10 text-error' : 'bg-secondary/10 text-secondary'}`}>
+                                                    {bookedCount}/{capacity}
+                                                </span>
+                                            )}
+                                            {waitlistCount > 0 && (
+                                                <span className="text-[9px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md">
+                                                    Fila: {waitlistCount}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-[9px] font-bold text-on-surface-variant uppercase mt-1">{cls.court} • {cls.teacher?.full_name}</p>
+                                    </div>
+                                </div>
+                            <button 
+                                onClick={() => !isPast && !isBooked && handleBooking(cls)} 
+                                disabled={isPast || bookingLoading === cls.id || isBooked || (isFull && isUserInWaitlist)} 
+                                className={`h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all ${isPast || (isBooked && !isUserInWaitlist) || (isFull && isUserInWaitlist) ? 'bg-surface-container-highest text-on-surface-variant/40 cursor-not-allowed shadow-none' : (isFull ? 'bg-orange-600 text-white active:scale-95' : 'bg-primary text-white active:scale-95')}`}
+                            >
+                                {bookingLoading === cls.id ? '...' : (isUserInWaitlist ? 'Na Fila' : (isBooked ? 'Agendado' : (isPast ? 'Encerrado' : (isFull ? 'Entrar na Fila' : 'Check-in'))))}
+                            </button>
+                        </div>
+                    );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* 6. Quadras Reservadas Section */}
           <section className="space-y-6">
               <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-secondary decoration-4 underline-offset-8 mb-8">Quadras Reservadas</h4>
               <div className="space-y-4">
@@ -945,79 +1016,6 @@ export default function StudentDashboard() {
                       </div>
                   )}
               </div>
-          </section>
-
-
-
-          {/* 6. Calendário & Horários de Aula */}
-          <section className="space-y-8">
-            <div className="grid grid-cols-7 gap-2 bg-white p-4 rounded-[32px] shadow-sm border border-primary-container/10">
-                {weekDays.map((date, idx) => {
-                    const isSelected = date.toDateString() === selectedDate.toDateString();
-                    return (
-                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'bg-secondary text-white shadow-md scale-105' : 'text-on-surface-variant'}`}>
-                            <span className="text-[9px] font-black uppercase tracking-tighter">
-                                {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÃB'][date.getDay()]}
-                            </span>
-                            <span className="text-sm font-black">{date.getDate()}</span>
-                        </button>
-                    )
-                })}
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between px-2">
-                <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant/40">Horários de Aula</h4>
-                <Link to="/book-class" className="text-[10px] font-black text-secondary flex items-center gap-1 uppercase tracking-widest">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
-              </div>
-              <div className="space-y-3">
-                {dayClasses.map(cls => {
-                    const isPast = new Date(cls.start_time) < new Date();
-                    const isBooked = bookings.some(b => b.classes.id === cls.id && b.status === 'agendado');
-                    const bookedCount = (cls.bookings || []).filter((b: any) => b.status === 'agendado').length;
-                    const capacity = cls.capacity || 8;
-                    const isFull = bookedCount >= capacity;
-                    const waitlistCount = (cls.waitlist || []).filter((w: any) => w.status === 'waiting').length;
-                    const isUserInWaitlist = (cls.waitlist || []).some((w: any) => w.student_id === profile.id && w.status === 'waiting');
-
-                    return (
-                        <div key={cls.id} className={`bg-white p-5 rounded-[28px] border border-primary-container/10 shadow-sm flex items-center justify-between group transition-all ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
-                                <div 
-                                    onClick={() => fetchRoster(cls)}
-                                    className="cursor-pointer group flex items-center gap-4"
-                                >
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPast ? 'bg-surface-container-highest text-on-surface-variant/40' : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white'}`}>
-                                        <span className="material-symbols-outlined text-sm">groups</span>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h5 className={`font-headline font-bold text-sm uppercase leading-none ${isPast ? 'text-on-surface-variant/40' : 'text-on-surface'}`}>{new Date(cls.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {cls.name}</h5>
-                                            {bookedCount > 0 && (
-                                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${isFull ? 'bg-error/10 text-error' : 'bg-secondary/10 text-secondary'}`}>
-                                                    {bookedCount}/{capacity}
-                                                </span>
-                                            )}
-                                            {waitlistCount > 0 && (
-                                                <span className="text-[9px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md">
-                                                    Fila: {waitlistCount}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-[9px] font-bold text-on-surface-variant uppercase mt-1">{cls.court} • {cls.teacher?.full_name}</p>
-                                    </div>
-                                </div>
-                            <button 
-                                onClick={() => !isPast && !isBooked && handleBooking(cls)} 
-                                disabled={isPast || bookingLoading === cls.id || isBooked || (isFull && isUserInWaitlist)} 
-                                className={`h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-md transition-all ${isPast || (isBooked && !isUserInWaitlist) || (isFull && isUserInWaitlist) ? 'bg-surface-container-highest text-on-surface-variant/40 cursor-not-allowed shadow-none' : (isFull ? 'bg-orange-600 text-white active:scale-95' : 'bg-primary text-white active:scale-95')}`}
-                            >
-                                {bookingLoading === cls.id ? '...' : (isUserInWaitlist ? 'Na Fila' : (isBooked ? 'Agendado' : (isPast ? 'Encerrado' : (isFull ? 'Entrar na Fila' : 'Check-in'))))}
-                            </button>
-                        </div>
-                    );
-                })}
-              </div>
-            </div>
           </section>
         </main>
 
