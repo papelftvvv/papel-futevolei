@@ -65,18 +65,7 @@ export default function StudentDashboard() {
         
         // Prototype Mode: If no user, use a demo profile
         if (!user) {
-          setProfile({
-            full_name: 'Usuário Demo',
-            avatar_url: null,
-            plan_status: 'ativo',
-            remaining_checkins: 5,
-            plan: { name: 'Plano Pro', classes_per_week: 8, billing_cycle: 'mensal' }
-          });
-          setBookings([]);
-          setCourtRentals([]);
-          setDayUseBookings([]);
-          setWeeklyBookingsCount(5);
-          setLoading(false);
+          navigate('/login');
           return;
         }
 
@@ -851,7 +840,48 @@ export default function StudentDashboard() {
              </Link>
           </section>
 
-          {/* 4. Quadras Reservadas Section (WITH GESTÃO) */}
+          {/* 4. Meus Check-ins (AULAS) - movido para cima */}
+          <section className="space-y-6">
+            <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-primary decoration-4 underline-offset-8 mb-8">Meus Check-ins</h4>
+            <div className="space-y-4">
+              {bookings.length > 0 ? bookings.map(booking => {
+                const isPast = new Date(booking.classes.start_time) < new Date();
+                return (
+                  <div key={booking.id} className={`flex items-center gap-4 p-5 bg-white rounded-[28px] border-2 border-primary-container/10 shadow-sm transition-all ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                      <span className="material-symbols-outlined font-bold">sports_volleyball</span>
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-headline font-bold text-on-surface text-lg leading-none mb-1">{booking.classes.name}</h5>
+                      <p className="text-xs font-bold text-on-surface-variant tracking-tight uppercase">
+                        {new Date(booking.classes.start_time).toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • {new Date(booking.classes.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </p>
+                    </div>
+                    <div className="text-right flex flex-col items-end gap-2">
+                        <div className="flex flex-col gap-2">
+                          <div className={`px-4 py-2 rounded-full font-black text-[10px] uppercase tracking-widest text-center ${booking.status === 'falta' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
+                            {booking.status === 'falta' ? 'Falta Marcada' : 'Agendado'}
+                          </div>
+                          {booking.status !== 'falta' && !isPast && (
+                            <button 
+                              onClick={() => handleCancelBooking(booking)}
+                              disabled={bookingLoading === booking.id}
+                              className="bg-surface-container-highest/50 hover:bg-error/10 hover:text-error text-on-surface-variant p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50"
+                            >
+                              <span className="material-symbols-outlined text-lg">{bookingLoading === booking.id ? 'sync' : 'cancel'}</span>
+                            </button>
+                          )}
+                        </div>
+                    </div>
+                  </div>
+                );
+              }) : (
+                  <div className="text-center py-10 text-on-surface-variant font-medium italic opacity-50 px-12 leading-tight">Sua agenda de futevôlei está livre.</div>
+              )}
+            </div>
+          </section>
+
+          {/* 5. Quadras Reservadas Section (WITH GESTÃO) */}
           <section className="space-y-6">
               <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-secondary decoration-4 underline-offset-8 mb-8">Quadras Reservadas</h4>
               <div className="space-y-4">
@@ -917,46 +947,7 @@ export default function StudentDashboard() {
               </div>
           </section>
 
-          {/* 5. Meus Check-ins (AULAS) */}
-          <section className="space-y-6">
-            <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-primary decoration-4 underline-offset-8 mb-8">Meus Check-ins</h4>
-            <div className="space-y-4">
-              {bookings.length > 0 ? bookings.map(booking => {
-                const isPast = new Date(booking.classes.start_time) < new Date();
-                return (
-                  <div key={booking.id} className={`flex items-center gap-4 p-5 bg-white rounded-[28px] border-2 border-primary-container/10 shadow-sm transition-all ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                      <span className="material-symbols-outlined font-bold">sports_volleyball</span>
-                    </div>
-                    <div className="flex-1">
-                      <h5 className="font-headline font-bold text-on-surface text-lg leading-none mb-1">{booking.classes.name}</h5>
-                      <p className="text-xs font-bold text-on-surface-variant tracking-tight uppercase">
-                        {new Date(booking.classes.start_time).toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })} • {new Date(booking.classes.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                      </p>
-                    </div>
-                    <div className="text-right flex flex-col items-end gap-2">
-                        <div className="flex flex-col gap-2">
-                          <div className={`px-4 py-2 rounded-full font-black text-[10px] uppercase tracking-widest text-center ${booking.status === 'falta' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
-                            {booking.status === 'falta' ? 'Falta Marcada' : 'Agendado'}
-                          </div>
-                          {booking.status !== 'falta' && !isPast && (
-                            <button 
-                              onClick={() => handleCancelBooking(booking)}
-                              disabled={bookingLoading === booking.id}
-                              className="bg-surface-container-highest/50 hover:bg-error/10 hover:text-error text-on-surface-variant p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50"
-                            >
-                              <span className="material-symbols-outlined text-lg">{bookingLoading === booking.id ? 'sync' : 'cancel'}</span>
-                            </button>
-                          )}
-                        </div>
-                    </div>
-                  </div>
-                );
-              }) : (
-                  <div className="text-center py-10 text-on-surface-variant font-medium italic opacity-50 px-12 leading-tight">Sua agenda de futevôlei está livre.</div>
-              )}
-            </div>
-          </section>
+
 
           {/* 6. Calendário & Horários de Aula */}
           <section className="space-y-8">
