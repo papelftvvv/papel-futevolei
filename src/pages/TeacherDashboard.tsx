@@ -1,12 +1,14 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import TeacherNavbar from '../components/TeacherNavbar';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
+import { useUnit } from '../contexts/UnitContext';
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
+  const { activeUnit, units, setUnitBySlug } = useUnit();
   const [profile, setProfile] = useState<{
     full_name: string;
     avatar_url: string | null;
@@ -39,6 +41,7 @@ export default function TeacherDashboard() {
               bookings:bookings(status)
             `)
             .eq('teacher_id', user.id)
+            .eq('unit_id', activeUnit?.id)
             .order('start_time', { ascending: true });
           
           setClasses(classesData || []);
@@ -66,7 +69,7 @@ export default function TeacherDashboard() {
       }
     }
     fetchData();
-  }, []);
+  }, [activeUnit]);
 
   const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : '...';
 
@@ -83,9 +86,28 @@ export default function TeacherDashboard() {
 
       <main className="pt-20 px-6 max-w-2xl mx-auto space-y-8">
         {/* Welcome Section */}
-        <section className="relative overflow-hidden pt-4">
-          <h2 className="font-headline text-3xl font-extrabold text-white tracking-tight">Bom dia, {firstName}!</h2>
-          <p className="text-white/70 text-sm mt-1 uppercase font-bold tracking-widest text-[10px]">Pronto para as sessões de hoje?</p>
+        <section className="flex justify-between items-end pt-4">
+          <div>
+            <h2 className="font-headline text-3xl font-extrabold text-white tracking-tight">Bom dia, {profile?.full_name?.split(' ')[0] || 'Professor'}!</h2>
+            <p className="text-white/70 text-sm mt-1 uppercase font-bold tracking-widest text-[10px]">Pronto para as sessões de hoje?</p>
+          </div>
+
+          <div className="flex bg-white/10 p-1 rounded-2xl border border-white/10 shadow-lg backdrop-blur-sm">
+                {units.map((unit) => (
+                    <button
+                        key={unit.id}
+                        onClick={() => setUnitBySlug(unit.slug)}
+                        className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300 flex flex-col items-center gap-0.5 ${
+                            activeUnit?.id === unit.id 
+                            ? 'bg-primary text-on-primary shadow-lg scale-105 z-10' 
+                            : 'text-white/40 hover:text-white/80'
+                        }`}
+                    >
+                        <span>{unit.slug === 'ctl' ? 'CTL' : 'Complexo'}</span>
+                        {activeUnit?.id === unit.id && <div className="w-1 h-1 bg-on-primary rounded-full" />}
+                    </button>
+                ))}
+            </div>
         </section>
 
         {/* Action Button */}

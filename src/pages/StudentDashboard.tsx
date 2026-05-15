@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ShareCard from '../components/ShareCard';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
-import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useUnit } from '../contexts/UnitContext';
 import SportyBackground from '../components/SportyBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import MarketingModal from '../components/MarketingModal';
 import PWAInstallPrompt from '../components/PWAInstallPrompt';
 import { useOneSignal } from '../hooks/useOneSignal';
-
 export default function StudentDashboard() {
   const navigate = useNavigate();
+  const { activeUnit, units, setUnitBySlug } = useUnit();
   const [profile, setProfile] = useState<any>(null);
   const [authUser, setAuthUser] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -21,6 +23,8 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [weeklyBookingsCount, setWeeklyBookingsCount] = useState(0);
   const [isQuotaModalOpen, setIsQuotaModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [allActivities, setAllActivities] = useState<any[]>([]);
   const [nextRenewalDate, setNextRenewalDate] = useState<Date | null>(null);
   const [dayClasses, setDayClasses] = useState<any[]>([]);
   const [bookingLoading, setBookingLoading] = useState<string | null>(null);
@@ -70,14 +74,48 @@ export default function StudentDashboard() {
           return;
         }
 
-        const { data: profileData } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*, plan:plan_id(name, classes_per_week, billing_cycle)')
           .eq('id', user.id)
-          .single();
-        setProfile(profileData);
+          .maybeSingle();
+        
+        if (profileError) console.error("Erro ao buscar perfil:", profileError);
+
+        let finalProfile = profileData;
+
+        // Auto-correção: Se o perfil não existir, vamos criar um agora mesmo
+        if (!profileData && user) {
+          const newProfile = {
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
+            avatar_url: user.user_metadata?.avatar_url,
+            role: 'student',
+            points: 0
+          };
+          
+          const { data: createdProfile } = await supabase
+            .from('profiles')
+            .upsert(newProfile)
+            .select()
+            .single();
+          
+          if (createdProfile) finalProfile = createdProfile;
+          else finalProfile = newProfile;
+        }
+
+        setProfile(finalProfile);
         setAuthUser(user);
 
+        // Fetch ALL activities for stats calculation
+        const { data: allBookings } = await supabase
+          .from('bookings')
+          .select('id, class:class_id(start_time, unit_id)')
+          .eq('student_id', user.id)
+          .neq('status', 'cancelado');
+        setAllActivities(allBookings || []);
+
+        // Busca agendamentos (filtra por unidade APENAS nas aulas)
         const { data: bookingsData } = await supabase
           .from('bookings')
           .select(`id, status, plan_id, classes:class_id (*, teacher:teacher_id(full_name, email))`)
@@ -85,12 +123,19 @@ export default function StudentDashboard() {
           .neq('status', 'cancelado')
           .order('created_at', { ascending: false });
         
-        const futureBookings = (bookingsData || []).filter((b: any) => new Date(b.classes.start_time) >= new Date());
+        // Filtra os bookings que pertencem à unidade ativa localmente para garantir consistência
+        const filteredBookings = (bookingsData || []).filter((b: any) => {
+          if (!activeUnit) return true;
+          return b.classes?.unit_id === activeUnit.id;
+        });
+
+        const futureBookings = filteredBookings.filter((b: any) => b.classes && new Date(b.classes.start_time) >= new Date());
         setBookings(futureBookings);
 
         const { data: rentalsData } = await supabase
           .from('court_rentals')
           .select('*')
+          .eq('unit_id', activeUnit?.id)
           .or(`student_id.eq.${user.id},participants.cs.{${user.id}}`)
           .neq('status', 'cancelado')
           .order('rental_date', { ascending: true });
@@ -100,9 +145,12 @@ export default function StudentDashboard() {
           .from('day_use_bookings')
           .select('*, day_use_offers(*)')
           .eq('student_id', user.id)
+          .eq('day_use_offers.unit_id', activeUnit?.id)
           .neq('status', 'cancelado')
           .order('created_at', { ascending: false });
-        setDayUseBookings(dayUseData || []);
+        
+        const validDayUseData = (dayUseData || []).filter(d => d.day_use_offers);
+        setDayUseBookings(validDayUseData);
 
         // --- LÓGICA DE RENOVAÇÃO INDIVIDUAL E ACÚMULO ---
         let currentBalance = Math.max(0, profileData.remaining_checkins || 0);
@@ -121,7 +169,9 @@ export default function StudentDashboard() {
         }
 
         // Se já passou da data de renovação, processa o acúmulo
-        while (new Date() >= nextRenewal && classesToAdd > 0) {
+        let iterations = 0;
+        while (new Date() >= nextRenewal && classesToAdd > 0 && iterations < 52) { // Limite de 1 ano para segurança
+            iterations++;
             currentBalance += classesToAdd;
             lastActivation = new Date(nextRenewal);
             if (billingCycle === 'mensal') {
@@ -195,11 +245,29 @@ export default function StudentDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [navigate, selectedDate]);
+  }, [navigate, selectedDate, activeUnit]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Calculate stats for ShareCard
+  const shareStats = useMemo(() => {
+    const today = new Date();
+    const firstDayOfWeek = new Date(today);
+    firstDayOfWeek.setDate(today.getDate() - today.getDay());
+    const weekStr = firstDayOfWeek.toISOString().split('T')[0];
+
+    const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    
+    return {
+      name: profile?.full_name || 'Atleta',
+      avatar: profile?.avatar_url || '',
+      checkinsThisMonth: allActivities.filter((a: any) => a.class?.start_time?.startsWith(monthStr)).length,
+      checkinsThisWeek: allActivities.filter((a: any) => a.class?.start_time >= weekStr).length,
+      points: profile?.points || 0
+    };
+  }, [allActivities, profile]);
 
   // Marketing Logic: Show once per day
   useEffect(() => {
@@ -698,7 +766,7 @@ export default function StudentDashboard() {
     }
   }
 
-  const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : '...';
+
   const weekDays = (() => {
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -715,65 +783,88 @@ export default function StudentDashboard() {
   })();
 
   const capitalizedMonth = selectedDate.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, (c) => c.toUpperCase());
-  const displayName = profile?.full_name
-    ? profile.full_name.split(' ')[0]
-    : authUser?.user_metadata?.full_name
-    ? authUser.user_metadata.full_name.split(' ')[0]
-    : authUser?.user_metadata?.name
-    ? authUser.user_metadata.name.split(' ')[0]
-    : authUser?.email?.split('@')[0] || '...';
+
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal PAPEL FUTEVÔLEI...</div>;
 
   return (
     <SportyBackground topHeight="25%">
       <div className="pb-32 min-h-screen font-body relative">
-        <TopAppBar title="PAPEL FUTEVÔLEI BEACH CLUB" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
+        <TopAppBar title="PAPEL FUTEVÔLEI" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
 
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8">
-          {/* 1. Welcome Header & Vagas */}
-          <section className="flex justify-between items-start text-white">
-            <div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800 }} className="text-4xl leading-tight">Olá, {displayName}!</h2>
-              <p className="text-white/70 font-medium mt-1 uppercase text-[10px] tracking-widest leading-none">
-                  {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? '∞' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
-              </p>
+          {/* 1. Welcome Header & Unit Selector */}
+          <section className="flex justify-between items-start text-on-surface">
+            <div className="flex-1">
+              <h2 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface drop-shadow-sm">
+                Olá, {profile?.full_name?.split(' ')[0] || authUser?.user_metadata?.full_name?.split(' ')[0] || authUser?.user_metadata?.name?.split(' ')[0] || 'Atleta'}!
+              </h2>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-on-surface-variant font-bold uppercase text-[10px] tracking-widest leading-none">
+                    {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? '∞' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
+                </p>
+                <button 
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="flex items-center gap-1 text-primary hover:text-primary/80 transition-all active:scale-95"
+                  title="Compartilhar Conquista"
+                >
+                  <span className="material-symbols-outlined text-sm font-black">share</span>
+                  <span className="text-[9px] font-black uppercase tracking-tighter">Compartilhar</span>
+                </button>
+              </div>
             </div>
+
+            <div className="flex bg-surface-container-high/40 p-1 rounded-2xl border border-white/10 shadow-lg backdrop-blur-sm">
+                {units.map((unit) => (
+                    <button
+                        key={unit.id}
+                        onClick={() => setUnitBySlug(unit.slug)}
+                        className={`px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex flex-col items-center gap-0.5 ${
+                            activeUnit?.id === unit.id 
+                            ? 'bg-primary text-on-primary shadow-lg scale-105 z-10' 
+                            : 'text-on-surface/40 hover:text-on-surface/80'
+                        }`}
+                    >
+                        <span>{unit.slug === 'ctl' ? 'CTL' : 'Complexo'}</span>
+                        {activeUnit?.id === unit.id && <div className="w-1 h-1 bg-on-primary rounded-full" />}
+                    </button>
+                ))}
+            </div>
+          </section>
             {profile?.plan && profile.plan.classes_per_week < 99 && (
-                <div className="bg-white p-3 rounded-2xl shadow-lg border border-primary-container/20 min-w-[120px] text-primary">
+                <div className="bg-surface-bright p-3 rounded-2xl shadow-lg border border-primary/20 min-w-[120px] text-primary">
                     <div className="text-[10px] font-black uppercase tracking-tighter">Vagas Restantes</div>
                     <div className="text-xl font-headline font-black leading-none">
                         {profile.plan.classes_per_week - weeklyBookingsCount}
                     </div>
                 </div>
             )}
-          </section>
 
-          <Link to="/meu-pontos" className="block bg-[#1A1A1A] border-2 border-[#D4AF37]/30 p-6 rounded-[32px] shadow-xl group active:scale-95 transition-all overflow-hidden relative">
+          <Link to="/profile" className="block bg-surface-bright border-2 border-primary/30 p-6 rounded-[32px] shadow-xl group active:scale-95 transition-all overflow-hidden relative">
               <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transform rotate-12 transition-all">
-                  <span className="material-symbols-outlined text-[100px] text-[#D4AF37]">workspace_premium</span>
+                  <span className="material-symbols-outlined text-[100px] text-primary">workspace_premium</span>
               </div>
               <div className="flex justify-between items-center relative z-10">
                   <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]/80">Seu Programa de Fidelidade</p>
-                      <h3 className="font-headline font-black text-2xl text-white uppercase italic tracking-tighter">PAPEL <span className="text-[#D4AF37]">POINTS</span></h3>
-                      <div className="flex items-center gap-2 text-[#D4AF37]">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/80">Seu Programa de Fidelidade</p>
+                      <h3 className="font-headline font-black text-2xl text-on-surface uppercase italic tracking-tighter">PAPEL <span className="text-primary">POINTS</span></h3>
+                      <div className="flex items-center gap-2 text-primary">
                           <span className="material-symbols-outlined text-sm font-bold">celebration</span>
                           <p className="text-[10px] font-bold uppercase tracking-widest leading-none">Resgate prêmios exclusivos</p>
                       </div>
                   </div>
                   <div className="text-right">
-                      <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Saldo</p>
+                      <p className="text-[10px] font-black text-on-surface/40 uppercase tracking-widest mb-1">Saldo</p>
                       <div className="flex items-baseline gap-1 justify-end">
-                          <span className="text-3xl font-black text-[#D4AF37]">{loyaltyPoints}</span>
-                          <span className="text-[10px] font-bold text-white/60">pts</span>
+                          <span className="text-3xl font-black text-primary">{loyaltyPoints}</span>
+                          <span className="text-[10px] font-bold text-on-surface/60">pts</span>
                       </div>
                   </div>
               </div>
           </Link>
 
           {/* 2.1 Ranking Preview Card (NEW) */}
-          <Link to="/ranking" className="block bg-white p-6 rounded-[32px] shadow-sm border border-primary-container/10 group active:scale-95 transition-all overflow-hidden relative">
+          <Link to="/ranking" className="block bg-surface-bright p-6 rounded-[32px] shadow-sm border border-outline-variant group active:scale-95 transition-all overflow-hidden relative">
               <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-3xl">workspace_premium</span>
@@ -827,23 +918,22 @@ export default function StudentDashboard() {
               </motion.div>
           )}
 
-          {/* 3. Quick Actions */}
           <section className="grid grid-cols-2 gap-4">
-             <Link to="/court-booking" className="bg-white p-6 rounded-[32px] shadow-sm border border-primary-container/10 flex flex-col items-center gap-3 active:scale-95 transition-all text-center group">
-                <div className="w-14 h-14 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">stadium</span>
+             <Link to="/court-booking" className="bg-surface-bright p-6 rounded-[32px] shadow-sm border border-outline-variant flex flex-col items-center gap-3 active:scale-95 transition-all text-center group">
+                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-3xl font-black">stadium</span>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-secondary-container uppercase tracking-widest">Aluguel</p>
+                  <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Aluguel</p>
                   <h4 className="font-headline font-black text-on-surface">Quadra</h4>
                 </div>
              </Link>
-             <Link to="/day-use" className="bg-white p-6 rounded-[32px] shadow-sm border border-primary-container/10 flex flex-col items-center gap-3 active:scale-95 transition-all text-center group">
+             <Link to="/day-use" className="bg-surface-bright p-6 rounded-[32px] shadow-sm border border-outline-variant flex flex-col items-center gap-3 active:scale-95 transition-all text-center group">
                 <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">wb_sunny</span>
+                  <span className="material-symbols-outlined text-3xl font-black">wb_sunny</span>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-primary-container uppercase tracking-widest">Reserva</p>
+                  <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Reserva</p>
                   <h4 className="font-headline font-black text-on-surface">Day Use</h4>
                 </div>
              </Link>
@@ -885,18 +975,18 @@ export default function StudentDashboard() {
                   </div>
                 );
               }) : (
-                  <div className="text-center py-10 text-on-surface-variant font-medium italic opacity-50 px-12 leading-tight">Sua agenda de futevôlei está livre.</div>
+                  <p className="text-center py-6 text-on-surface-variant/40 text-[10px] font-black uppercase tracking-widest italic">Nenhum check-in agendado.</p>
               )}
             </div>
           </section>
 
           {/* 5. Calendário & Horários de Aula */}
           <section className="space-y-8">
-            <div className="grid grid-cols-7 gap-1 bg-white p-3 rounded-[32px] shadow-sm border border-gray-100">
+            <div className="grid grid-cols-7 gap-1 bg-surface-bright p-3 rounded-[32px] shadow-sm border border-outline-variant">
                 {weekDays.map((date, idx) => {
                     const isSelected = date.toDateString() === selectedDate.toDateString();
                     return (
-                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'scale-105 shadow-md' : ''}`} style={isSelected ? { backgroundColor: '#006971', color: 'white' } : { color: '#555' }}>
+                        <button key={idx} onClick={() => setSelectedDate(date)} className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isSelected ? 'scale-105 shadow-md bg-primary text-on-primary' : 'text-on-surface-variant'}`}>
                             <span className="text-[9px] font-black uppercase tracking-tighter">
                                 {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][date.getDay()]}
                             </span>
@@ -908,8 +998,8 @@ export default function StudentDashboard() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
-                <h4 className="font-headline font-black text-sm uppercase tracking-widest" style={{ color: '#aaa' }}>Horários de Aula</h4>
-                <Link to="/book-class" className="text-[10px] font-black flex items-center gap-1 uppercase tracking-widest" style={{ color: '#006971' }}>Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
+                <h4 className="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant/40">Horários de Aula</h4>
+                <Link to="/book-class" className="text-[10px] font-black flex items-center gap-1 uppercase tracking-widest text-primary">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
               </div>
               <div className="space-y-3">
                 {dayClasses.map(cls => {
@@ -963,13 +1053,13 @@ export default function StudentDashboard() {
 
           {/* 6. Quadras Reservadas Section */}
           <section className="space-y-6">
-              <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-secondary decoration-4 underline-offset-8 mb-8">Quadras Reservadas</h4>
+              <h4 className="font-headline font-extrabold text-2xl tracking-tight uppercase underline decoration-primary decoration-4 underline-offset-8 mb-8">Quadras Reservadas</h4>
               <div className="space-y-4">
                   {courtRentals.length > 0 ? courtRentals.map(rental => {
                       const isPast = new Date(`${rental.rental_date}T${rental.start_time}`) < new Date();
                       return (
-                          <button key={rental.id} onClick={() => openRentalModal(rental)} className={`w-full bg-white p-6 rounded-[32px] border-2 border-primary-container/10 shadow-sm flex items-center gap-4 text-left active:scale-[0.98] transition-all group ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
-                              <div className="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-all">
+                          <button key={rental.id} onClick={() => openRentalModal(rental)} className={`w-full bg-surface-bright p-6 rounded-[32px] border-2 border-outline-variant shadow-sm flex items-center gap-4 text-left active:scale-[0.98] transition-all group ${isPast ? 'opacity-40 grayscale-[0.6]' : ''}`}>
+                              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
                                   <span className="material-symbols-outlined font-black">stadium</span>
                               </div>
                               <div className="flex-1">
@@ -1342,7 +1432,14 @@ export default function StudentDashboard() {
         </AnimatePresence>
       </div>
 
+      <StudentNavbar activePage="home" />
       <PWAInstallPrompt />
+
+      <ShareCard 
+        isOpen={isShareModalOpen} 
+        onClose={() => setIsShareModalOpen(false)} 
+        stats={shareStats}
+      />
     </SportyBackground>
   );
 }

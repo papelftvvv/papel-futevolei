@@ -35,25 +35,50 @@ export default function Profile() {
 
       if (!user) throw new Error('No user logged in');
 
-      const { data, error, status } = await supabase
+      let { data, error, status } = await supabase
         .from('profiles')
         .select(`full_name, role, avatar_url, cpf`)
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error && status !== 406) throw error;
+
+      // Se não existir perfil, cria um básico agora mesmo
+      if (!data) {
+        const newFullName = user.user_metadata?.full_name || user.user_metadata?.name || 'Novo Atleta';
+        const newAvatar = user.user_metadata?.avatar_url || null;
+        
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: user.id,
+            full_name: newFullName,
+            avatar_url: newAvatar,
+            role: 'aluno',
+            updated_at: new Date()
+          })
+          .select()
+          .single();
+        
+        if (createError) console.error('Erro ao criar perfil:', createError);
+        data = newProfile;
+      }
 
       if (data) {
         setProfile({
           full_name: data.full_name || '',
-          phone: user.user_metadata?.phone || '',
+          phone: user.user_metadata?.phone || user.phone || '',
           cpf: data.cpf || '',
           avatar_url: data.avatar_url,
         });
       }
 
       // Fetch points and transactions
-      const { data: pointsData } = await supabase.from('loyalty_points').select('balance').eq('user_id', user.id).single();
+      const { data: pointsData } = await supabase.from('loyalty_points').select('balance').eq('user_id', user.id).maybeSingle();
+      if (!pointsData) {
+        // Criar registro de pontos se não existir
+        await supabase.from('loyalty_points').insert({ user_id: user.id, balance: 0 });
+      }
       setPointsBalance(pointsData?.balance || 0);
 
       const { data: transData } = await supabase
@@ -64,7 +89,7 @@ export default function Profile() {
       setTransactions(transData || []);
 
     } catch (error: any) {
-      alert(error.message);
+      console.error('Erro ao carregar perfil:', error);
     } finally {
       setLoading(false);
     }
@@ -111,12 +136,13 @@ export default function Profile() {
       }
 
       const file = event.target.files[0];
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // Nota: Assume-se que o bucket 'avatars' existe e é público.
-      // Se não existir, o upload falhará.
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
@@ -127,14 +153,14 @@ export default function Profile() {
       
       setProfile({ ...profile, avatar_url: data.publicUrl });
       
-      // Update the profile in the database immediately after upload
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-          await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', user.id);
-      }
+      // Update the profile in the database immediately
+      await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', user.id);
+      
+      alert('Foto atualizada com sucesso!');
 
     } catch (error: any) {
-      alert(error.message);
+      console.error('Erro no upload:', error);
+      alert('Erro ao enviar foto. Verifique se a imagem é pequena ou tente outra.');
     } finally {
       setUploading(false);
     }
@@ -177,7 +203,7 @@ export default function Profile() {
           <div className="space-y-2">
             <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1">Nome Completo</label>
             <input
-              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border border-outline-variant/30 focus:ring-4 focus:ring-primary/10 transition-all font-medium text-on-surface"
               type="text"
               value={profile.full_name}
               onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
@@ -188,7 +214,7 @@ export default function Profile() {
           <div className="space-y-2">
             <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1">CPF (apenas números)</label>
             <input
-              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border border-outline-variant/30 focus:ring-4 focus:ring-primary/10 transition-all font-medium text-on-surface"
               type="text"
               placeholder="000.000.000-00"
               value={profile.cpf}
@@ -208,7 +234,7 @@ export default function Profile() {
           <div className="space-y-2">
             <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant ml-1">Telefone</label>
             <input
-              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium opacity-60"
+              className="w-full h-14 px-5 rounded-xl bg-surface-container-highest border border-outline-variant/30 focus:ring-4 focus:ring-primary/10 transition-all font-medium opacity-60 text-on-surface"
               type="tel"
               value={profile.phone}
               disabled
@@ -228,9 +254,9 @@ export default function Profile() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-[#006971] text-white font-headline font-bold text-lg rounded-xl shadow-lg active:scale-95 transition-transform disabled:opacity-50"
+              className="w-full h-14 bg-primary text-on-primary font-headline font-bold text-lg rounded-xl shadow-lg active:scale-95 transition-transform disabled:opacity-50"
             >
-              SALVAR ALTERAÇÃ•ES
+              SALVAR ALTERAÇÕES
             </button>
             <button
               type="button"

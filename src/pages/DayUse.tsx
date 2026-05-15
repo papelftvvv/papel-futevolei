@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
@@ -7,9 +7,11 @@ import StudentNavbar from '../components/StudentNavbar';
 import { notifyAdmin } from '../lib/notifications';
 import CPFModal from '../components/CPFModal';
 import PaymentChoiceModal from '../components/PaymentChoiceModal';
+import { useUnit } from '../contexts/UnitContext';
 
 export default function DayUse() {
   const navigate = useNavigate();
+  const { activeUnit } = useUnit();
   const [offers, setOffers] = useState<any[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,9 +21,9 @@ export default function DayUse() {
   const [showPaymentChoice, setShowPaymentChoice] = useState(false);
 
   useEffect(() => {
-    fetchOffers();
+    if (activeUnit) fetchOffers();
     fetchUserProfile();
-  }, []);
+  }, [activeUnit]);
 
   async function fetchUserProfile() {
       const { data: { user } } = await supabase.auth.getUser();
@@ -42,6 +44,7 @@ export default function DayUse() {
       const { data, error } = await supabase
         .from('day_use_offers')
         .select('*')
+        .eq('unit_id', activeUnit?.id)
         .gte('offer_date', today)
         .order('offer_date', { ascending: true });
       
@@ -88,7 +91,8 @@ export default function DayUse() {
           student_id: user.id,
           offer_id: selectedOffer,
           price: offer.price,
-          status: 'pagamento_local'
+          status: 'pagamento_local',
+          unit_id: activeUnit?.id
         });
 
       if (bookingError) throw bookingError;
@@ -124,7 +128,8 @@ export default function DayUse() {
           student_id: user.id,
           offer_id: selectedOffer,
           price: offer.price,
-          status: 'pendente'
+          status: 'pendente',
+          unit_id: activeUnit?.id
         })
         .select()
         .single();
@@ -171,16 +176,16 @@ export default function DayUse() {
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-10 relative z-10 text-center">
           {/* Header Section */}
           <section className="space-y-3">
-            <div className="w-20 h-20 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto shadow-inner">
               <span className="material-symbols-outlined text-4xl">wb_sunny</span>
             </div>
-            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende seu <span className="text-secondary">Day Use</span></h2>
-            <p className="text-on-surface-variant text-sm font-medium max-w-xs mx-auto">Escolha uma das ofertas propostas pelo clube para curtir o dia.</p>
+            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende seu <span className="text-primary">Day Use</span></h2>
+            <p className="text-on-surface-variant text-sm font-medium max-w-xs mx-auto">Escolha uma das ofertas propostas pela unidade para curtir o dia.</p>
           </section>
 
           {/* New Informative Section */}
-          <section className="bg-secondary/5 border-2 border-secondary/10 rounded-[32px] p-6 text-left space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center gap-3 text-secondary">
+          <section className="bg-primary/5 border-2 border-primary/10 rounded-[32px] p-6 text-left space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex items-center gap-3 text-primary">
               <span className="material-symbols-outlined font-black">info</span>
               <h3 className="font-headline font-black text-sm uppercase tracking-widest">Como funciona o Day Use?</h3>
             </div>
@@ -195,7 +200,7 @@ export default function DayUse() {
                 'Todos os atletas podem jogar em conjunto e também em categorias mistas'
               ].map((item, i) => (
                 <li key={i} className="flex gap-2 items-start text-[11px] font-bold text-on-surface/70">
-                  <span className="material-symbols-outlined text-[14px] text-secondary mt-0.5">check_circle</span>
+                  <span className="material-symbols-outlined text-[14px] text-primary mt-0.5">check_circle</span>
                   {item}
                 </li>
               ))}
@@ -213,19 +218,19 @@ export default function DayUse() {
                         onClick={() => setSelectedOffer(off.id)}
                         className={`w-full p-6 rounded-[32px] border-2 transition-all flex justify-between items-center text-left
                             ${selectedOffer === off.id 
-                                ? 'bg-secondary border-secondary text-white shadow-lg scale-[1.02]' 
-                                : 'bg-white border-primary-container/10 text-on-surface shadow-sm hover:border-secondary/30'
+                                ? 'bg-primary border-primary text-on-primary shadow-lg scale-[1.02]' 
+                                : 'bg-white border-primary-container/10 text-on-surface shadow-sm hover:border-primary/30'
                             }
                         `}
                     >
                         <div>
-                            <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${selectedOffer === off.id ? 'text-white/70' : 'text-secondary'}`}>
+                            <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${selectedOffer === off.id ? 'text-on-primary/70' : 'text-primary'}`}>
                                 {new Date(off.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'long' })}
                             </p>
                             <h3 className="font-headline font-black text-xl tracking-tight">
                                 {new Date(off.offer_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
                             </h3>
-                            <p className={`text-xs font-bold ${selectedOffer === off.id ? 'text-white/60' : 'text-on-surface-variant'}`}>
+                            <p className={`text-xs font-bold ${selectedOffer === off.id ? 'text-on-primary/60' : 'text-on-surface-variant'}`}>
                                 {off.start_time.slice(0,5)} Ã s {off.end_time.slice(0,5)}
                             </p>
                         </div>
@@ -247,7 +252,7 @@ export default function DayUse() {
               <button 
                 disabled={submitting}
                 onClick={handleRequest}
-                className="w-full bg-secondary text-white h-16 rounded-2xl font-headline font-black text-sm uppercase tracking-[0.25em] shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 animate-[slideUp_0.3s_ease]"
+                className="w-full bg-primary text-on-primary h-16 rounded-2xl font-headline font-black text-sm uppercase tracking-[0.25em] shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 animate-[slideUp_0.3s_ease]"
               >
                 {submitting ? 'PROCESSANDO...' : 'SOLICITAR PARTICIPAÇÃO'}
                 <span className="material-symbols-outlined font-black">arrow_forward</span>

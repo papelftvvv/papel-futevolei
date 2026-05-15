@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
@@ -7,6 +7,7 @@ import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { notifyAdmin } from '../lib/notifications';
 import CPFModal from '../components/CPFModal';
+import { useUnit } from '../contexts/UnitContext';
 
 interface Profile {
     id: string;
@@ -16,6 +17,7 @@ interface Profile {
 
 export default function CourtBooking() {
   const navigate = useNavigate();
+  const { activeUnit } = useUnit();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,11 +38,13 @@ export default function CourtBooking() {
   const hours = Array.from({ length: 15 }, (_, i) => i + 8);
 
   useEffect(() => {
-    fetchOccupiedSlots();
-    fetchPointsConfig();
-    fetchUserProfile();
-    fetchCourtPrice();
-  }, [selectedDate]);
+    if (activeUnit) {
+      fetchOccupiedSlots();
+      fetchPointsConfig();
+      fetchUserProfile();
+      fetchCourtPrice();
+    }
+  }, [selectedDate, activeUnit]);
 
   useEffect(() => {
     if (searchTerm.length > 2) {
@@ -75,7 +79,7 @@ export default function CourtBooking() {
       const { data } = await supabase
         .from('court_configs')
         .select('court_price_per_hour')
-        .eq('id', 'default')
+        .eq('unit_id', activeUnit?.id)
         .single();
       if (data) setCourtPrice(Number(data.court_price_per_hour));
   }
@@ -105,17 +109,19 @@ export default function CourtBooking() {
       setLoading(true);
       const dateString = selectedDate.toISOString().split('T')[0];
 
-      // 1. Buscar aulas (classes) do dia
+      // 1. Buscar aulas (classes) do dia filtrando por UNIDADE
       const { data: classes } = await supabase
         .from('classes')
         .select('start_time')
-        .filter('start_time', 'gte', `${dateString}T00:00:00`)
-        .filter('start_time', 'lte', `${dateString}T23:59:59`);
+        .eq('unit_id', activeUnit?.id)
+        .gte('start_time', `${dateString}T00:00:00`)
+        .lte('start_time', `${dateString}T23:59:59`);
 
-      // 2. Buscar aluguéis de quadra aprovados
+      // 2. Buscar aluguéis de quadra aprovados filtrando por UNIDADE
       const { data: rentals } = await supabase
         .from('court_rentals')
         .select('start_time, end_time')
+        .eq('unit_id', activeUnit?.id)
         .eq('rental_date', dateString)
         .eq('status', 'aprovado');
 
@@ -197,12 +203,13 @@ export default function CourtBooking() {
         .insert({
           student_id: user.id,
           court_name: 'QUADRA 1',
-           rental_date: dateString,
+          rental_date: dateString,
           start_time: `${String(startHour).padStart(2, '0')}:00:00`,
           end_time: `${String(endHour).padStart(2, '0')}:00:00`,
           total_price: selectedSlots.length * courtPrice,
           status: 'pendente',
-          participants: participants.map(p => p.id)
+          participants: participants.map(p => p.id),
+          unit_id: activeUnit?.id
         })
         .select()
         .single();
@@ -251,11 +258,11 @@ export default function CourtBooking() {
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8 relative z-10">
           {/* Header Section */}
           <section className="space-y-1">
-            <div className="flex items-center gap-2 text-secondary font-bold text-[10px] uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-[0.2em]">
               <span className="material-symbols-outlined text-sm">stadium</span>
-              RESIDENCIAL PAPEL FUTEVÔLEI
+              {activeUnit?.name || 'RESIDENCIAL PAPEL FUTEVÔLEI'}
             </div>
-            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende sua <span className="text-secondary">Quadra</span></h2>
+            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende sua <span className="text-primary">Quadra</span></h2>
             <p className="text-on-surface-variant text-sm font-medium">Valor: R$ {courtPrice},00 por hora</p>
           </section>
 
@@ -268,7 +275,7 @@ export default function CourtBooking() {
                     setSelectedDate(new Date(e.target.value));
                     setSelectedSlots([]);
                 }}
-                className="w-full bg-transparent border-none font-black text-center text-secondary focus:ring-0"
+                className="w-full bg-transparent border-none font-black text-center text-primary focus:ring-0"
             />
           </section>
 
@@ -282,7 +289,7 @@ export default function CourtBooking() {
                         placeholder="Nome dos parceiros (ex: Felipe)..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full h-14 bg-white rounded-2xl px-6 border border-primary-container/10 shadow-sm font-bold text-sm focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all"
+                        className="w-full h-14 bg-white rounded-2xl px-6 border border-primary-container/10 shadow-sm font-bold text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                         {searching ? (
@@ -371,8 +378,8 @@ export default function CourtBooking() {
                         ${isOccupied 
                         ? 'bg-surface-container opacity-30 border-transparent cursor-not-allowed' 
                         : isSelected 
-                            ? 'bg-secondary border-secondary text-white shadow-lg' 
-                            : 'bg-white border-primary-container/20 text-on-surface-variant hover:border-secondary/30'
+                            ? 'bg-primary border-primary text-on-primary shadow-lg' 
+                            : 'bg-white border-primary-container/20 text-on-surface-variant hover:border-primary/30'
                         }
                     `}
                     >
@@ -391,16 +398,16 @@ export default function CourtBooking() {
                 <div className="flex justify-between items-center">
                     <div className="space-y-0.5">
                        <p className="text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest">Total do Aluguel ({selectedSlots.length}h)</p>
-                       <p className="text-3xl font-black text-secondary leading-none">R$ {selectedSlots.length * courtPrice},00</p>
+                       <p className="text-3xl font-black text-primary leading-none">R$ {selectedSlots.length * courtPrice},00</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-secondary/5 rounded-[24px] border border-secondary/10">
-                    <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white shadow-lg shadow-secondary/20">
+                <div className="flex items-center gap-3 p-4 bg-primary/5 rounded-[24px] border border-primary/10">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
                         <span className="material-symbols-outlined font-black">stars</span>
                     </div>
                     <div>
-                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest">PAPEL FUTEVÔLEI Points Bônus</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">PAPEL Points Bônus</p>
                         <p className="text-sm font-black text-on-surface leading-tight">
                             {selectedSlots.length * pointsPerHour} pontos <span className="text-on-surface-variant font-medium text-[11px] normal-case">para cada jogador!</span>
                         </p>

@@ -1,7 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
+import { useUnit } from '../contexts/UnitContext';
 
 interface CourtRental {
   id: string;
@@ -25,6 +26,7 @@ interface DayUseRequest {
 }
 
 export default function ManageLeisure() {
+  const { activeUnit } = useUnit();
   const [activeTab, setActiveTab] = useState<'rentals' | 'day-use' | 'create-offer' | 'payments'>('rentals');
   const [rentals, setRentals] = useState<CourtRental[]>([]);
   const [dayUseRequests, setDayUseRequests] = useState<DayUseRequest[]>([]);
@@ -55,8 +57,8 @@ export default function ManageLeisure() {
   const [testMode, setTestMode] = useState(true); // Default como true para segurança
 
   useEffect(() => {
-    fetchData();
-  }, [activeTab]);
+    if (activeUnit) fetchData();
+  }, [activeTab, activeUnit]);
 
   async function fetchData() {
     try {
@@ -65,6 +67,7 @@ export default function ManageLeisure() {
         const { data, error } = await supabase
           .from('court_rentals')
           .select('*, student:student_id(full_name, email, onesignal_id)')
+          .eq('unit_id', activeUnit?.id)
           .neq('status', 'cancelado')
           .order('created_at', { ascending: false });
         if (error) throw error;
@@ -73,6 +76,7 @@ export default function ManageLeisure() {
         const { data, error } = await supabase
           .from('day_use_bookings')
           .select('*, student:student_id(full_name, email, onesignal_id), offer:offer_id(*)')
+          .eq('unit_id', activeUnit?.id)
           .neq('status', 'cancelado')
           .order('created_at', { ascending: false });
         if (error) throw error;
@@ -90,13 +94,21 @@ export default function ManageLeisure() {
           .reduce((sum, p) => sum + Number(p.amount), 0);
         setTotalRevenue(total);
       } else {
-        const { data, error } = await supabase.from('day_use_offers').select('*').order('offer_date', { ascending: false });
+        const { data, error } = await supabase
+          .from('day_use_offers')
+          .select('*')
+          .eq('unit_id', activeUnit?.id)
+          .order('offer_date', { ascending: false });
         if (error) throw error;
         setOffers(data || []);
       }
 
       // Buscar preço da quadra (Independente da aba)
-      const { data: priceData } = await supabase.from('court_configs').select('court_price_per_hour').eq('id', 'default').single();
+      const { data: priceData } = await supabase
+        .from('court_configs')
+        .select('court_price_per_hour')
+        .eq('unit_id', activeUnit?.id)
+        .single();
       if (priceData) setCourtPrice(Number(priceData.court_price_per_hour));
 
     } catch (error: any) {
@@ -112,7 +124,7 @@ export default function ManageLeisure() {
       const { data, error } = await supabase
         .from('court_configs')
         .update({ court_price_per_hour: courtPrice })
-        .eq('id', 'default')
+        .eq('unit_id', activeUnit?.id)
         .select();
       
       if (error) throw error;
@@ -132,7 +144,10 @@ export default function ManageLeisure() {
   async function handleCreateOffer() {
     try {
       setSubmitting(true);
-      const { data: offer, error } = await supabase.from('day_use_offers').insert([newOffer]).select().single();
+      const { data: offer, error } = await supabase.from('day_use_offers').insert([{
+        ...newOffer,
+        unit_id: activeUnit?.id
+      }]).select().single();
       if (error) throw error;
 
       // Determinar destinatários

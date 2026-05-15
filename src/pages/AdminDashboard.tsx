@@ -1,8 +1,9 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
+import { useUnit } from '../contexts/UnitContext';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ export default function AdminDashboard() {
     { title: 'Gestão de Marketing', icon: 'campaign', path: '/admin/marketing', color: 'bg-primary' },
   ];
 
+  const { activeUnit, units, setUnitBySlug } = useUnit();
+
   async function handleLogout() {
     await supabase.auth.signOut();
     navigate('/');
@@ -30,9 +33,28 @@ export default function AdminDashboard() {
       <TopAppBar title="PAINEL ADMINISTRATIVO" />
 
       <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8">
-        <header>
-          <h2 className="font-headline text-3xl font-extrabold tracking-tight text-white">Olá, Administrador!</h2>
-          <p className="text-white/70 font-medium mt-1">O que vamos gerenciar hoje?</p>
+        <header className="flex justify-between items-end">
+          <div>
+            <h2 className="font-headline text-3xl font-extrabold tracking-tight text-white">Olá, Administrador!</h2>
+            <p className="text-white/70 font-medium mt-1">O que vamos gerenciar hoje?</p>
+          </div>
+
+          <div className="flex bg-white/10 p-1 rounded-2xl border border-white/10 shadow-lg backdrop-blur-md">
+                {units.map((unit) => (
+                    <button
+                        key={unit.id}
+                        onClick={() => setUnitBySlug(unit.slug)}
+                        className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300 flex flex-col items-center gap-0.5 ${
+                            activeUnit?.id === unit.id 
+                            ? 'bg-primary text-on-primary shadow-lg scale-105 z-10' 
+                            : 'text-white/40 hover:text-white/80'
+                        }`}
+                    >
+                        <span>{unit.slug === 'ctl' ? 'CTL' : 'Complexo'}</span>
+                        {activeUnit?.id === unit.id && <div className="w-1 h-1 bg-on-primary rounded-full" />}
+                    </button>
+                ))}
+            </div>
         </header>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">

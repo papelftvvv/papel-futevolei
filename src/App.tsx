@@ -28,41 +28,47 @@ import ForgotPassword from './pages/ForgotPassword';
 import UpdatePassword from './pages/UpdatePassword';
 import ManageMarketing from './pages/ManageMarketing';
 import Ranking from './pages/Ranking';
+import MyBookings from './pages/MyBookings';
 
+import { UnitProvider } from './contexts/UnitContext';
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<StudentDashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/ranking" element={<Ranking />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
-        <Route path="/plans" element={<Plans />} />
-        <Route path="/create-class" element={<CreateClass />} />
-        <Route path="/manage-plans" element={<ManagePlans />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/marketing" element={<ManageMarketing />} />
-        <Route path="/manage-teachers" element={<ManageTeachers />} />
-        <Route path="/class-management/:id" element={<ClassManagement />} />
-        <Route path="/book-class" element={<ClassSelection />} />
-        <Route path="/student/history" element={<StudentHistory />} />
-        <Route path="/admin/approvals" element={<ManageApprovals />} />
-        <Route path="/court-booking" element={<CourtBooking />} />
-        <Route path="/day-use" element={<DayUse />} />
-        <Route path="/admin/leisure" element={<ManageLeisure />} />
-        <Route path="/admin/loyalty" element={<ManageLoyalty />} />
-        <Route path="/admin/cashier" element={<CashierPointRedemption />} />
-        <Route path="/admin/scan-pontos" element={<ScanRedemption />} />
-        <Route path="/admin/analytics" element={<AdminAnalytics />} />
-        <Route path="/admin/students" element={<ManageStudents />} />
-        <Route path="/meu-pontos" element={<MyLoyalty />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/update-password" element={<UpdatePassword />} />
-      </Routes>
-    </Router>
+    <UnitProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<StudentDashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/ranking" element={<Ranking />} />
+          <Route path="/teacher" element={<TeacherDashboard />} />
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/create-class" element={<CreateClass />} />
+          <Route path="/manage-plans" element={<ManagePlans />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/marketing" element={<ManageMarketing />} />
+          <Route path="/manage-teachers" element={<ManageTeachers />} />
+          <Route path="/class-management/:id" element={<ClassManagement />} />
+          <Route path="/book-class" element={<ClassSelection />} />
+          <Route path="/student/history" element={<StudentHistory />} />
+          <Route path="/admin/approvals" element={<ManageApprovals />} />
+          <Route path="/court-booking" element={<CourtBooking />} />
+          <Route path="/day-use" element={<DayUse />} />
+          <Route path="/admin/leisure" element={<ManageLeisure />} />
+          <Route path="/admin/loyalty" element={<ManageLoyalty />} />
+          <Route path="/admin/cashier" element={<CashierPointRedemption />} />
+          <Route path="/admin/scan-pontos" element={<ScanRedemption />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/students" element={<ManageStudents />} />
+          <Route path="/meu-pontos" element={<MyLoyalty />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/update-password" element={<UpdatePassword />} />
+          <Route path="/manage-marketing" element={<ManageMarketing />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
+        </Routes>
+      </Router>
+    </UnitProvider>
   );
 }

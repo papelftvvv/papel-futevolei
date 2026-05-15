@@ -72,26 +72,21 @@ export default function Login() {
   };
 
   return (
-    <SportyBackground>
-      <div className="flex flex-col relative" style={{ minHeight: '100vh' }}>
+    <div className="min-h-screen w-full bg-[#000000] text-white font-body relative overflow-hidden flex flex-col">
+      {/* Background Glows */}
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="relative z-20 flex-grow flex flex-col items-center px-8 pt-24">
+      <main className="relative z-20 flex-grow flex flex-col items-center px-8 pt-24 max-w-md mx-auto w-full">
         {/* Logo & Header Section */}
         <div className="flex flex-col items-center w-full mb-12">
-            <div style={{ mixBlendMode: 'screen' }} className="mb-6 flex justify-center w-full">
+            <div className="mb-8 flex justify-center w-full">
               <motion.img
                 initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ 
-                  scale: 1, 
-                  opacity: 1,
-                }}
-                transition={{ 
-                  scale: { type: 'spring', damping: 20, stiffness: 100 },
-                  duration: 0.8
-                }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 100 }}
                 alt="Papel Futevôlei Logo"
-                className="w-64 h-64 object-contain"
-                style={{ filter: 'contrast(200%) grayscale(100%)' }}
+                className="w-48 h-48 object-contain"
                 src="/logo.png"
               />
             </div>
@@ -199,7 +194,6 @@ export default function Login() {
           </p>
         </footer>
       </main>
-      </div>
-    </SportyBackground>
+    </div>
   );
 }

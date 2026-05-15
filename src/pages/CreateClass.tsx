@@ -1,11 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
 import TeacherNavbar from '../components/TeacherNavbar';
 import { supabase } from '../lib/supabase';
+import { useUnit } from '../contexts/UnitContext';
 
 export default function CreateClass() {
   const navigate = useNavigate();
+  const { activeUnit } = useUnit();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   
@@ -14,16 +16,22 @@ export default function CreateClass() {
   const [time, setTime] = useState('');
   const [capacity, setCapacity] = useState(8);
   const [court, setCourt] = useState('Quadra 1');
+  const [unitId, setUnitId] = useState(activeUnit?.id || '');
+  const [units, setUnits] = useState<any[]>([]);
 
   useEffect(() => {
-    async function getProfile() {
+    async function fetchData() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         setProfile(data);
       }
+      
+      const { data: unitsData } = await supabase.from('units').select('*').order('name');
+      setUnits(unitsData || []);
+      if (!unitId && unitsData && unitsData.length > 0) setUnitId(unitsData[0].id);
     }
-    getProfile();
+    fetchData();
   }, []);
 
   async function handleCreate(e: React.FormEvent) {
@@ -42,7 +50,8 @@ export default function CreateClass() {
         start_time: startDateTime.toISOString(),
         end_time: endDateTime.toISOString(),
         capacity,
-        court
+        court,
+        unit_id: unitId
       });
 
       if (error) throw error;
@@ -97,16 +106,29 @@ export default function CreateClass() {
                   />
                 </div>
              </div>
-             <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Quadra</label>
-                <select 
-                  value={court} onChange={e => setCourt(e.target.value)}
-                  className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
-                >
-                  <option value="Quadra 1">Quadra 1</option>
-                  <option value="Quadra 2">Quadra 2</option>
-                  <option value="Quadra 3">Quadra 3 (Central)</option>
-                </select>
+             <div className="grid grid-cols-2 gap-4">
+                <div>
+                   <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Unidade</label>
+                   <select 
+                    value={unitId} onChange={e => setUnitId(e.target.value)}
+                    className="w-full h-14 px-4 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
+                   >
+                     {units.map(u => (
+                       <option key={u.id} value={u.id}>{u.name}</option>
+                     ))}
+                   </select>
+                </div>
+                <div>
+                   <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Quadra</label>
+                   <select 
+                     value={court} onChange={e => setCourt(e.target.value)}
+                     className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
+                   >
+                     <option value="Quadra 1">Quadra 1</option>
+                     <option value="Quadra 2">Quadra 2</option>
+                     <option value="Quadra 3">Quadra 3 (Central)</option>
+                   </select>
+                </div>
              </div>
              <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Vagas (Capacidade)</label>
@@ -120,7 +142,7 @@ export default function CreateClass() {
 
           <button 
             type="submit" disabled={loading}
-            className="w-full bg-secondary py-5 rounded-2xl text-white font-headline font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all disabled:opacity-50"
+            className="w-full bg-primary py-5 rounded-2xl text-on-primary font-headline font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             {loading ? 'CRIANDO...' : 'CRIAR E PUBLICAR AULA'}
             <span className="material-symbols-outlined">send</span>

@@ -5,6 +5,7 @@ import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUnit } from '../contexts/UnitContext';
 
 interface RosterStudent {
     full_name: string;
@@ -13,6 +14,7 @@ interface RosterStudent {
 
 export default function ClassSelection() {
   const navigate = useNavigate();
+  const { activeUnit } = useUnit();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,8 +28,8 @@ export default function ClassSelection() {
   const [loadingRoster, setLoadingRoster] = useState(false);
 
   useEffect(() => {
-    fetchProfileAndData();
-  }, [selectedDate]);
+    if (activeUnit) fetchProfileAndData();
+  }, [selectedDate, activeUnit]);
 
   async function fetchProfileAndData() {
     try {
@@ -56,6 +58,7 @@ export default function ClassSelection() {
           teacher:teacher_id (full_name),
           bookings(status)
         `)
+        .eq('unit_id', activeUnit?.id)
         .gte('start_time', startOfDay.toISOString())
         .lte('start_time', endOfDay.toISOString())
         .order('start_time', { ascending: true });
@@ -265,11 +268,11 @@ export default function ClassSelection() {
 
       <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8 relative z-10">
         <section className="space-y-1">
-            <div className="flex items-center gap-2 text-secondary font-bold text-[10px] uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-[0.2em]">
                 <span className="material-symbols-outlined text-sm">wb_sunny</span>
-                {profile?.plan ? (profile.plan.classes_per_week >= 99 ? 'Aulas Ilimitadas âˆž' : `${weeklyBookingsCount}/${profile.plan.classes_per_week} aulas no ${profile.plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`) : 'Vagas Disponíveis'}
+                {profile?.plan ? (profile.plan.classes_per_week >= 99 ? 'Aulas Ilimitadas ∞' : `${weeklyBookingsCount}/${profile.plan.classes_per_week} aulas no ${profile.plan.billing_cycle === 'mensal' ? 'mês' : 'semana'}`) : 'Vagas Disponíveis'}
             </div>
-            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende seu <span className="text-secondary">Treino</span></h2>
+            <h2 className="font-headline text-4xl font-black tracking-tighter text-on-surface">Agende seu <span className="text-primary">Treino</span></h2>
         </section>
 
         <section className="relative">
@@ -285,8 +288,8 @@ export default function ClassSelection() {
                   onClick={() => setSelectedDate(date)}
                   className={`flex-shrink-0 w-16 h-20 rounded-3xl border-2 flex flex-col items-center justify-center transition-all duration-300 
                     ${isSelected 
-                      ? 'bg-secondary border-secondary text-white shadow-lg scale-105' 
-                      : 'bg-white border-primary-container/20 text-on-surface-variant hover:border-secondary/30'
+                      ? 'bg-primary border-primary text-on-primary shadow-lg scale-105' 
+                      : 'bg-surface border-outline-variant text-on-surface-variant hover:border-primary/30'
                     }
                   `}
                 >
@@ -319,7 +322,7 @@ export default function ClassSelection() {
                 const isBooked = bookedClassIds.includes(cls.id);
 
                 return (
-                  <div key={cls.id} className="bg-white p-6 rounded-[32px] border-2 border-primary-container/10 shadow-sm transition-all group overflow-hidden relative">
+                  <div key={cls.id} className="bg-surface-bright p-6 rounded-[32px] border-2 border-outline-variant shadow-sm transition-all group overflow-hidden relative">
                     <div className="flex items-center justify-between relative z-10">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-4">
@@ -356,7 +359,7 @@ export default function ClassSelection() {
                           className={`h-14 px-8 rounded-2xl font-headline font-extrabold text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95
                             ${isFull || isLocked || isPast || profile?.plan_status !== 'ativo' || isBooked
                               ? 'bg-surface-container-highest text-on-surface-variant/30 cursor-not-allowed shadow-none'
-                              : 'bg-secondary text-white hover:bg-secondary/90'
+                              : 'bg-primary text-on-primary hover:opacity-90'
                             }
                           `}
                         >

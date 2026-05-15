@@ -9,7 +9,7 @@ interface SportyBackgroundProps {
 
 export default function SportyBackground({ children, topHeight, bgColor, dividerColor }: SportyBackgroundProps) {
   return (
-    <div className="relative min-h-screen w-full bg-black text-white overflow-x-hidden">
+    <div className="relative min-h-screen w-full bg-surface text-on-surface overflow-x-hidden transition-colors duration-500">
       {/* Decorative Gradient Glows */}
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute top-1/2 -right-24 w-80 h-80 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
