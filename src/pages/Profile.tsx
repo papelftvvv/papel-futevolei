@@ -14,6 +14,7 @@ export default function Profile() {
     phone: string;
     cpf: string;
     avatar_url: string | null;
+    wristband_level?: number;
   }>({
     full_name: '',
     phone: '',
@@ -37,7 +38,7 @@ export default function Profile() {
 
       let { data, error, status } = await supabase
         .from('profiles')
-        .select(`full_name, role, avatar_url, cpf`)
+        .select(`full_name, role, avatar_url, cpf, wristband_level`)
         .eq('id', user.id)
         .maybeSingle();
 
@@ -70,6 +71,7 @@ export default function Profile() {
           phone: user.user_metadata?.phone || user.phone || '',
           cpf: data.cpf || '',
           avatar_url: data.avatar_url,
+          wristband_level: data.wristband_level
         });
       }
 
@@ -173,7 +175,7 @@ export default function Profile() {
   return (
     <SportyBackground topHeight="25%">
       <div className="text-on-surface pb-32 min-h-screen relative">
-      <TopAppBar title="MEU PERFIL" avatarSrc={profile.avatar_url || undefined} showBackButton />
+      <TopAppBar title="MEU PERFIL" avatarSrc={profile.avatar_url || undefined} showBackButton wristbandLevel={profile.wristband_level} />
 
       <main className="mt-24 px-6 max-w-lg mx-auto space-y-8">
         <section className="flex flex-col items-center space-y-4">

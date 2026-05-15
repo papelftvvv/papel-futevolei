@@ -7,7 +7,22 @@ interface TopAppBarProps {
   avatarSrc?: string;
   avatarAlt?: string;
   showBackButton?: boolean;
+  wristbandLevel?: number;
 }
+
+const getWristbandColor = (level?: number) => {
+  switch (level) {
+    case 1: return '#E5E5E5'; // Branco
+    case 2: return '#9CA3AF'; // Cinza
+    case 3: return '#3B82F6'; // Azul
+    case 4: return '#EAB308'; // Amarelo
+    case 5: return '#F97316'; // Laranja
+    case 6: return '#22C55E'; // Verde
+    case 7: return '#EF4444'; // Vermelho
+    case 8: return '#111827'; // Preto
+    default: return '#e0e0e0'; // Default gray or outline
+  }
+};
 
 const DEFAULT_AVATAR = '/logo.png';
 
@@ -15,7 +30,8 @@ export default function TopAppBar({
   title, 
   avatarSrc, 
   avatarAlt = 'Perfil',
-  showBackButton = false
+  showBackButton = false,
+  wristbandLevel
 }: TopAppBarProps) {
   const navigate = useNavigate();
   const { activeUnit, units, setUnitBySlug } = useUnit();
@@ -63,7 +79,10 @@ export default function TopAppBar({
             <span className="material-symbols-outlined font-bold text-xl">sync</span>
           </button>
 
-          <div className="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant shrink-0 shadow-sm">
+          <div 
+            className="w-10 h-10 rounded-full overflow-hidden border-2 shrink-0 shadow-sm"
+            style={{ borderColor: getWristbandColor(wristbandLevel) }}
+          >
             <img
               alt={avatarAlt}
               className="w-full h-full object-cover"

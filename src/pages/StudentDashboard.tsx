@@ -790,7 +790,7 @@ export default function StudentDashboard() {
   return (
     <SportyBackground topHeight="25%">
       <div className="pb-32 min-h-screen font-body relative">
-        <TopAppBar title="PAPEL FUTEVÔLEI" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
+        <TopAppBar title="PAPEL FUTEVÔLEI" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} wristbandLevel={profile?.wristband_level} />
 
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8">
           {/* 1. Welcome Header & Unit Selector */}

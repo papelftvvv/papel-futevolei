@@ -93,7 +93,7 @@ export default function Ranking() {
   return (
     <SportyBackground topHeight="20%">
       <div className="pb-32 min-h-screen font-body relative text-white bg-black">
-        <TopAppBar title="RANKING MENSAL" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} />
+        <TopAppBar title="RANKING MENSAL" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} wristbandLevel={profile?.wristband_level} />
 
         <main className="mt-20 space-y-6">
           {/* Header Title */}
