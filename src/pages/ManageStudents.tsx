@@ -218,21 +218,21 @@ export default function ManageStudents() {
   );
 
   return (
-    <div className="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
+    <div className="bg-black font-body text-white antialiased min-h-screen pb-32">
       <TopAppBar title="GESTÃO DE ALUNOS" showBackButton />
 
       <main className="pt-24 px-6 max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="font-headline font-extrabold text-3xl tracking-tight leading-none">Alunos Cadastrados</h1>
-            <p className="text-on-surface-variant text-sm font-medium mt-1">Visualize, edite e exporte os dados da base.</p>
+            <h1 className="font-headline font-extrabold text-3xl tracking-tight leading-none text-white">Alunos Cadastrados</h1>
+            <p className="text-white/50 text-sm font-medium mt-1">Visualize, edite e exporte os dados da base.</p>
           </div>
           <button 
             onClick={exportCSV}
-            className="bg-secondary text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-secondary/90 active:scale-95 transition-all text-xs uppercase tracking-widest"
+            className="bg-white text-black px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-white/90 active:scale-95 transition-all text-xs uppercase tracking-widest"
           >
-            <span className="material-symbols-outlined text-sm">download</span>
+            <span className="material-symbols-outlined text-sm text-black">download</span>
             Exportar CSV
           </button>
         </div>
@@ -246,13 +246,13 @@ export default function ManageStudents() {
 
         {/* Search Bar */}
         <div className="relative group">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/40 group-focus-within:text-primary transition-colors">search</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/40 group-focus-within:text-white transition-colors">search</span>
           <input 
             type="text" 
             placeholder="Buscar por nome, email ou telefone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-14 pl-12 pr-6 rounded-3xl bg-white border-2 border-primary-container/10 focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
+            className="w-full h-14 pl-12 pr-6 rounded-3xl bg-zinc-900 border-2 border-white/10 focus:border-white/30 focus:ring-4 focus:ring-white/5 transition-all font-medium text-sm text-white placeholder:text-white/30"
           />
         </div>
 
@@ -262,13 +262,13 @@ export default function ManageStudents() {
              <div className="py-20 text-center font-bold text-primary animate-pulse uppercase tracking-widest text-xs">Carregando base de alunos...</div>
           ) : filteredStudents.length > 0 ? (
             filteredStudents.map(student => (
-              <div key={student.id} className="bg-white p-6 rounded-[32px] border border-primary-container/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-md">
+              <div key={student.id} className="bg-zinc-900 border border-white/10 p-6 rounded-[32px] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:bg-zinc-800">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden shrink-0 border-4 border-white shadow-sm">
                     <img src={student.avatar_url || 'https://via.placeholder.com/150'} alt={student.full_name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h3 className="font-headline font-black text-xl text-on-surface leading-tight flex items-center gap-2">
+                    <h3 className="font-headline font-black text-xl text-white leading-tight flex items-center gap-2">
                         {student.full_name}
                         <button 
                             onClick={() => {
@@ -281,10 +281,10 @@ export default function ManageStudents() {
                             {student.loyalty_points?.balance || 0} PTS
                         </button>
                     </h3>
-                    <p className="text-on-surface-variant text-xs font-medium flex items-center gap-1">
+                    <p className="text-white/50 text-xs font-medium flex items-center gap-1">
                       <span className="material-symbols-outlined text-[10px]">mail</span> {student.email}
                     </p>
-                    <p className="text-on-surface-variant text-[10px] font-black uppercase tracking-widest mt-1 flex items-center gap-1">
+                    <p className="text-white/50 text-[10px] font-black uppercase tracking-widest mt-1 flex items-center gap-1">
                       <span className="material-symbols-outlined text-[10px]">phone</span> {student.phone || 'Sem telefone'}
                     </p>
                   </div>
@@ -317,44 +317,44 @@ export default function ManageStudents() {
 
         {/* Edit Modal */}
         {editingStudent && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-on-surface/20 animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-8 space-y-6 animate-in zoom-in-95 duration-300 border-4 border-primary/10">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-black/60 animate-in fade-in duration-300">
+            <div className="bg-zinc-900 border border-white/10 w-full max-w-lg rounded-[40px] shadow-2xl p-8 space-y-6 animate-in zoom-in-95 duration-300">
               <div className="flex justify-between items-center">
-                <h2 className="font-headline font-black text-2xl tracking-tighter">Editar Perfil</h2>
-                <button onClick={() => setEditingStudent(null)} className="material-symbols-outlined text-on-surface-variant">close</button>
+                <h2 className="font-headline font-black text-2xl tracking-tighter text-white">Editar Perfil</h2>
+                <button onClick={() => setEditingStudent(null)} className="material-symbols-outlined text-white/50">close</button>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Nome Completo</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Nome Completo</label>
                   <input 
                     value={editingStudent.full_name} 
                     onChange={e => setEditingStudent({...editingStudent, full_name: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-surface-container font-bold" 
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Email</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Email</label>
                   <input 
                     value={editingStudent.email} 
                     onChange={e => setEditingStudent({...editingStudent, email: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-surface-container font-bold" 
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Telefone</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Telefone</label>
                   <input 
                     value={editingStudent.phone} 
                     onChange={e => setEditingStudent({...editingStudent, phone: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-surface-container font-bold" 
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Status do Plano</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Status do Plano</label>
                   <select 
                     value={editingStudent.plan_status} 
                     onChange={e => setEditingStudent({...editingStudent, plan_status: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-surface-container font-bold appearance-none"
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold appearance-none text-white"
                   >
                     <option value="nenhum">Nenhum</option>
                     <option value="pendente">Pendente</option>
@@ -383,7 +383,7 @@ export default function ManageStudents() {
 
         {/* Loyalty Points Modal */}
         {managingPoints && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-on-surface/20 animate-in fade-in duration-300">
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-black/60 animate-in fade-in duration-300">
                 <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col md:flex-row h-[80vh] md:h-auto">
                     {/* Left Side: History */}
                     <div className="flex-1 p-8 bg-surface-container/30 border-r border-primary-container/10 overflow-y-auto custom-scrollbar">
