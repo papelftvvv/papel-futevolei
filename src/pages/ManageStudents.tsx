@@ -45,12 +45,11 @@ export default function ManageStudents() {
       setLoading(true);
 
       // Busca todos os perfis que NÃO são admin ou professor
-      // (inclui role = 'student', role = null, e outros)
+      // Usa OR explícito para incluir também quem tem role = NULL
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
-        .not('role', 'eq', 'admin')
-        .not('role', 'eq', 'teacher')
+        .or('role.eq.student,role.is.null')
         .order('full_name', { ascending: true });
 
       if (profilesError) throw profilesError;

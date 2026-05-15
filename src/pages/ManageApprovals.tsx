@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
@@ -24,25 +24,28 @@ export default function ManageApprovals() {
   async function fetchApprovals() {
     try {
       setLoading(true);
+      // Busca perfis pendentes sem join direto (FK não explícita)
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          id,
-          full_name,
-          email,
-          pending_plan_id,
-          pending_plan:pending_plan_id(name, classes_per_week, type, billing_cycle),
-          remaining_checkins,
-          onesignal_id
-        `)
+        .select('id, full_name, email, pending_plan_id, remaining_checkins, onesignal_id')
         .eq('plan_status', 'pendente');
 
       if (error) throw error;
 
-      if (data) {
+      if (data && data.length > 0) {
+        // Busca nomes dos planos separadamente
+        const planIds = data.map((p: any) => p.pending_plan_id).filter(Boolean);
+        let planMap: Record<string, any> = {};
+        if (planIds.length > 0) {
+          const { data: plansData } = await supabase
+            .from('plans')
+            .select('id, name, classes_per_week, type, billing_cycle')
+            .in('id', planIds);
+          planMap = Object.fromEntries((plansData || []).map((p: any) => [p.id, p]));
+        }
         const updated = data.map((p: any) => ({
           ...p,
-          plan_name: p.pending_plan?.name
+          plan_name: planMap[p.pending_plan_id]?.name || 'Plano Desconhecido'
         }));
         setApprovals(updated);
       } else {
@@ -110,17 +113,17 @@ export default function ManageApprovals() {
     }
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando solicitações...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-white uppercase animate-pulse bg-black">Carregando solicitações...</div>;
 
   return (
     <SportyBackground topHeight="25%">
-      <div className="font-body text-on-surface antialiased min-h-screen pb-32 relative">
+      <div className="font-body text-white antialiased min-h-screen pb-32 relative">
       <TopAppBar title="Aprovações de Planos" showBackButton />
 
       <main className="pt-24 px-6 max-w-2xl mx-auto relative">
         <div className="mb-10">
-          <h1 className="font-headline font-extrabold text-3xl text-on-surface tracking-tight">Solicitações Pendentes</h1>
-          <p className="text-on-surface-variant text-sm font-medium">Aprovação de novos planos para alunos</p>
+          <h1 className="font-headline font-extrabold text-3xl text-white tracking-tight">Solicitações Pendentes</h1>
+          <p className="text-white/50 text-sm font-medium">Aprovação de novos planos para alunos</p>
         </div>
 
         {successMsg && (
@@ -130,18 +133,18 @@ export default function ManageApprovals() {
         )}
 
         {approvals.length === 0 ? (
-          <div className="bg-white/50 border-2 border-dashed border-outline-variant/30 rounded-3xl p-12 text-center">
-            <span className="material-symbols-outlined text-outline-variant/30 text-6xl mb-4">check_circle</span>
-            <p className="text-on-surface-variant font-medium">Nenhuma solicitação pendente no momento.</p>
+          <div className="bg-white/10 border-2 border-dashed border-white/20 rounded-3xl p-12 text-center">
+            <span className="material-symbols-outlined text-white/30 text-6xl mb-4">check_circle</span>
+            <p className="text-white/50 font-medium">Nenhuma solicitação pendente no momento.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {approvals.map(app => (
-              <div key={app.id} className="bg-white p-6 rounded-2xl shadow-sm border border-primary-container/10 flex flex-col gap-4">
+              <div key={app.id} className="bg-zinc-900 border border-white/10 p-6 rounded-2xl flex flex-col gap-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-headline font-bold text-lg">{app.full_name || 'Aluno Sem Nome'}</h3>
-                    <p className="text-on-surface-variant text-sm lowercase">{app.email}</p>
+                    <h3 className="font-headline font-bold text-lg text-white">{app.full_name || 'Aluno Sem Nome'}</h3>
+                    <p className="text-white/50 text-sm lowercase">{app.email}</p>
                     <div className="mt-3 inline-flex items-center gap-2 bg-secondary/10 px-3 py-1 rounded-full">
                       <span className="material-symbols-outlined text-secondary text-sm">payments</span>
                       <span className="text-secondary text-xs font-black uppercase tracking-widest">{app.plan_name || 'Plano Desconhecido'}</span>
