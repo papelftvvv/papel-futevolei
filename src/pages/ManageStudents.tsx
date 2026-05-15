@@ -44,11 +44,13 @@ export default function ManageStudents() {
     try {
       setLoading(true);
 
-      // Busca perfis sem tentar fazer join com loyalty_points (sem FK explícita)
+      // Busca todos os perfis que NÃO são admin ou professor
+      // (inclui role = 'student', role = null, e outros)
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('role', 'student')
+        .not('role', 'eq', 'admin')
+        .not('role', 'eq', 'teacher')
         .order('full_name', { ascending: true });
 
       if (profilesError) throw profilesError;

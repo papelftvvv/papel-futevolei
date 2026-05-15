@@ -56,6 +56,17 @@ export default function Register() {
     }
 
     if (data.user) {
+      // Cria o perfil na tabela profiles imediatamente após o cadastro
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        full_name: fullName,
+        phone: phone,
+        role: role,
+        cpf: cleanCPF,
+        points: 0,
+        plan_status: 'nenhum'
+      });
+
       notifyAdmin('registration', {
         full_name: fullName,
         email: email,
@@ -64,7 +75,7 @@ export default function Register() {
         cpf: cleanCPF
       });
 
-      alert('Cadastro realizado com sucesso! Verifique seu e-mail (se habilitado) ou faça login.');
+      alert('Cadastro realizado com sucesso! Faça login para continuar.');
       navigate('/');
     }
   };
