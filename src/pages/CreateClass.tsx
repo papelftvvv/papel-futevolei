@@ -19,6 +19,8 @@ export default function CreateClass() {
   const [unitId, setUnitId] = useState(activeUnit?.id || '');
   const [units, setUnits] = useState<any[]>([]);
   const [wristbandLevel, setWristbandLevel] = useState(1);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [finalDate, setFinalDate] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -26,6 +28,12 @@ export default function CreateClass() {
       if (user) {
         const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         setProfile(data);
+        
+        if (data && data.role !== 'admin') {
+          alert('Apenas administradores podem acessar esta página.');
+          navigate('/');
+          return;
+        }
       }
       
       const { data: unitsData } = await supabase.from('units').select('*').order('name');
@@ -43,22 +51,49 @@ export default function CreateClass() {
       if (!user) throw new Error('Não autenticado');
 
       const startDateTime = new Date(`${date}T${time}`);
-      const endDateTime = new Date(startDateTime.getTime() + 90 * 60000); // +90 min default
+      
+      const classesToInsert = [];
 
-      const { error } = await supabase.from('classes').insert({
-        teacher_id: user.id,
-        name,
-        start_time: startDateTime.toISOString(),
-        end_time: endDateTime.toISOString(),
-        capacity,
-        court,
-        unit_id: unitId,
-        wristband_level: wristbandLevel
-      });
+      if (isRecurring && finalDate) {
+        const endDateObj = new Date(`${finalDate}T23:59:59`);
+        let currentStartDate = new Date(startDateTime);
+
+        while (currentStartDate <= endDateObj) {
+          const currentEndDate = new Date(currentStartDate.getTime() + 60 * 60000); // 1h duration
+          
+          classesToInsert.push({
+            teacher_id: user.id,
+            name,
+            start_time: currentStartDate.toISOString(),
+            end_time: currentEndDate.toISOString(),
+            capacity,
+            court,
+            unit_id: unitId,
+            wristband_level: wristbandLevel
+          });
+
+          // Add 7 days
+          currentStartDate.setDate(currentStartDate.getDate() + 7);
+        }
+      } else {
+        const endDateTime = new Date(startDateTime.getTime() + 60 * 60000); // 1h duration
+        classesToInsert.push({
+          teacher_id: user.id,
+          name,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
+          capacity,
+          court,
+          unit_id: unitId,
+          wristband_level: wristbandLevel
+        });
+      }
+
+      const { error } = await supabase.from('classes').insert(classesToInsert);
 
       if (error) throw error;
-      alert('Aula criada com sucesso!');
-      navigate('/teacher');
+      alert(`Aula(s) criada(s) com sucesso! Total: ${classesToInsert.length}`);
+      navigate('/admin');
     } catch (error: any) {
       alert(error.message);
     } finally {
@@ -108,6 +143,30 @@ export default function CreateClass() {
                   />
                 </div>
              </div>
+             
+             {/* Recorrência */}
+             <div className="flex items-center gap-2 ml-1 my-4">
+               <input 
+                 type="checkbox" 
+                 id="recurring" 
+                 checked={isRecurring} 
+                 onChange={e => setIsRecurring(e.target.checked)}
+                 className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+               />
+               <label htmlFor="recurring" className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Aula Recorrente</label>
+             </div>
+
+             {isRecurring && (
+               <div className="mb-4">
+                 <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Data Final da Recorrência</label>
+                 <input 
+                   type="date" value={finalDate} onChange={e => setFinalDate(e.target.value)}
+                   className="w-full h-14 px-4 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
+                   required={isRecurring}
+                 />
+               </div>
+             )}
+
              <div className="grid grid-cols-2 gap-4">
                 <div>
                    <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Unidade</label>

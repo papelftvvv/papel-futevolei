@@ -106,25 +106,7 @@ export default function Register() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ml-1">Eu sou...</label>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setRole('student')}
-                  className={`flex-1 py-3 rounded-lg font-headline font-bold text-[10px] tracking-widest transition-all border ${role === 'student' ? 'bg-white text-black border-white' : 'bg-transparent text-white/40 border-white/10'}`}
-                >
-                  ALUNO
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole('teacher')}
-                  className={`flex-1 py-3 rounded-lg font-headline font-bold text-[10px] tracking-widest transition-all border ${role === 'teacher' ? 'bg-white text-black border-white' : 'bg-transparent text-white/40 border-white/10'}`}
-                >
-                  PROFESSOR
-                </button>
-              </div>
-            </div>
+
 
             <div className="space-y-4">
               <div className="space-y-1">

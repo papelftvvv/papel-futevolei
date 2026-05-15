@@ -110,14 +110,7 @@ export default function TeacherDashboard() {
             </div>
         </section>
 
-        {/* Action Button */}
-        <button 
-          onClick={() => navigate('/create-class')}
-          className="w-full bg-primary text-white font-headline font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-all hover:brightness-110"
-        >
-          <span className="material-symbols-outlined text-2xl">add_circle</span>
-          CRIAR NOVA TURMA
-        </button>
+
 
         {/* Stats Bento Grid */}
         <div className="grid grid-cols-2 gap-4">

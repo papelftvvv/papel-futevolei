@@ -17,6 +17,7 @@ export default function AdminDashboard() {
     { title: 'Gestão de Professores', icon: 'badge', path: '/manage-teachers', bg: 'bg-white', text: 'text-black' },
     { title: 'Gestão de Planos', icon: 'payments', path: '/manage-plans', bg: 'bg-white', text: 'text-black' },
     { title: 'Gestão de Marketing', icon: 'campaign', path: '/admin/marketing', bg: 'bg-white', text: 'text-black' },
+    { title: 'Criar Aula', icon: 'add_circle', path: '/create-class', bg: 'bg-white', text: 'text-black' },
   ];
 
   async function handleLogout() {
