@@ -365,7 +365,7 @@ export default function ManageStudents() {
               <div className="flex gap-3">
                 <button 
                   onClick={handleUpdateStudent}
-                  className="flex-1 h-16 bg-primary text-white rounded-2xl font-headline font-black text-lg shadow-xl shadow-primary/20 active:scale-95 transition-transform"
+                  className="flex-1 h-16 bg-white text-black rounded-2xl font-headline font-black text-lg shadow-xl active:scale-95 transition-transform"
                 >
                   SALVAR
                 </button>
