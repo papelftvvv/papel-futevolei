@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { QRCodeSVG } from 'qrcode.react';
 import TopAppBar from '../components/TopAppBar';
@@ -184,7 +184,7 @@ export default function MyLoyalty() {
         <SportyBackground topHeight="25%" bgColor="bg-surface" dividerColor="fill-surface">
             <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/20">
                 <TopAppBar 
-                    title="PAPEL FUTEVÔLEI POINTS" 
+                    title="PAPEL POINTS" 
                     showBackButton 
                     avatarSrc={profile?.avatar_url}
                     avatarAlt={profile?.full_name}

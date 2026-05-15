@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
@@ -249,7 +249,7 @@ export default function Profile() {
                 <span className="material-symbols-outlined">stars</span>
              </div>
              <div>
-                <h3 className="font-headline font-extrabold text-xl">Meu PAPEL FUTEVÔLEI Points</h3>
+                <h3 className="font-headline font-extrabold text-xl">Meu PAPEL POINTS</h3>
                 <p className="text-on-surface-variant text-xs font-medium uppercase tracking-widest">Saldo Atual: <span className="text-secondary font-black">{pointsBalance} Pontos</span></p>
              </div>
           </div>

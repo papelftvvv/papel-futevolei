@@ -756,7 +756,7 @@ export default function StudentDashboard() {
               <div className="flex justify-between items-center relative z-10">
                   <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]/80">Seu Programa de Fidelidade</p>
-                      <h3 className="font-headline font-black text-2xl text-white uppercase italic tracking-tighter">PAPEL FUTEVÔLEI <span className="text-[#D4AF37]">POINTS</span></h3>
+                      <h3 className="font-headline font-black text-2xl text-white uppercase italic tracking-tighter">PAPEL <span className="text-[#D4AF37]">POINTS</span></h3>
                       <div className="flex items-center gap-2 text-[#D4AF37]">
                           <span className="material-symbols-outlined text-sm font-bold">celebration</span>
                           <p className="text-[10px] font-bold uppercase tracking-widest leading-none">Resgate prêmios exclusivos</p>
