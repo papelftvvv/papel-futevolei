@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface StudentNavbarProps {
-  activePage: 'home' | 'agenda' | 'perfil' | 'ranking';
+  activePage: 'home' | 'agendar' | 'agenda' | 'perfil' | 'ranking';
 }
 
 export default function StudentNavbar({ activePage }: StudentNavbarProps) {
@@ -15,6 +15,10 @@ export default function StudentNavbar({ activePage }: StudentNavbarProps) {
       <Link to="/student" className={activePage === 'home' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined text-sm" style={activePage === 'home' ? { fontVariationSettings: "'FILL' 1" } : undefined}>home</span>
         <span style={labelStyle}>Início</span>
+      </Link>
+      <Link to="/book-class" className={activePage === 'agendar' ? activeClass : inactiveClass}>
+        <span className="material-symbols-outlined text-sm" style={activePage === 'agendar' ? { fontVariationSettings: "'FILL' 1" } : undefined}>sports_volleyball</span>
+        <span style={labelStyle}>Agendar</span>
       </Link>
       <Link to="/ranking" className={activePage === 'ranking' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined text-sm" style={activePage === 'ranking' ? { fontVariationSettings: "'FILL' 1" } : undefined}>workspace_premium</span>

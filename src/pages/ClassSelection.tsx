@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
@@ -441,7 +441,7 @@ export default function ClassSelection() {
         )}
       </AnimatePresence>
 
-      <StudentNavbar activePage="home" />
+      <StudentNavbar activePage="agendar" />
 
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
