@@ -11,10 +11,22 @@ interface Profile {
   created_at: string;
   avatar_url: string;
   plan_status: string;
+  wristband_level?: number;
   loyalty_points?: {
       balance: number;
   };
 }
+
+const WRISTBANDS = [
+  { level: 1, name: 'Branco', color: 'bg-white text-black' },
+  { level: 2, name: 'Cinza', color: 'bg-zinc-500 text-white' },
+  { level: 3, name: 'Azul', color: 'bg-blue-600 text-white' },
+  { level: 4, name: 'Amarelo', color: 'bg-yellow-500 text-black' },
+  { level: 5, name: 'Laranja', color: 'bg-orange-500 text-white' },
+  { level: 6, name: 'Verde', color: 'bg-green-600 text-white' },
+  { level: 7, name: 'Vermelho', color: 'bg-red-600 text-white' },
+  { level: 8, name: 'Preto', color: 'bg-black text-white border border-[#D4AF37]' },
+];
 
 interface Transaction {
     id: string;
@@ -90,7 +102,8 @@ export default function ManageStudents() {
           full_name: editingStudent.full_name,
           email: editingStudent.email,
           phone: editingStudent.phone,
-          plan_status: editingStudent.plan_status
+          plan_status: editingStudent.plan_status,
+          wristband_level: editingStudent.wristband_level
         })
         .eq('id', editingStudent.id);
 
@@ -267,7 +280,7 @@ export default function ManageStudents() {
                     <img src={student.avatar_url || 'https://via.placeholder.com/150'} alt={student.full_name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h3 className="font-headline font-black text-xl text-white leading-tight flex items-center gap-2">
+                    <h3 className="font-headline font-black text-xl text-white leading-tight flex items-center gap-2 flex-wrap">
                         {student.full_name}
                         <button 
                             onClick={() => {
@@ -279,6 +292,9 @@ export default function ManageStudents() {
                             <span className="material-symbols-outlined text-[12px]">workspace_premium</span>
                             {student.loyalty_points?.balance || 0} PTS
                         </button>
+                        <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.color}`}>
+                            {WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.name}
+                        </span>
                     </h3>
                     <p className="text-white/50 text-xs font-medium flex items-center gap-1">
                       <span className="material-symbols-outlined text-[10px]">mail</span> {student.email}
@@ -358,6 +374,18 @@ export default function ManageStudents() {
                     <option value="nenhum">Nenhum</option>
                     <option value="pendente">Pendente</option>
                     <option value="ativo">Ativo</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Nível da Pulseira</label>
+                  <select 
+                    value={editingStudent.wristband_level || 1} 
+                    onChange={e => setEditingStudent({...editingStudent, wristband_level: parseInt(e.target.value)})}
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold appearance-none text-white"
+                  >
+                    {WRISTBANDS.map(w => (
+                      <option key={w.level} value={w.level}>{w.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>

@@ -7,6 +7,17 @@ import StudentNavbar from '../components/StudentNavbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUnit } from '../contexts/UnitContext';
 
+const WRISTBANDS = [
+  { level: 1, name: 'Branco', color: 'bg-white text-black border border-white/20' },
+  { level: 2, name: 'Cinza', color: 'bg-zinc-500 text-white' },
+  { level: 3, name: 'Azul', color: 'bg-blue-600 text-white' },
+  { level: 4, name: 'Amarelo', color: 'bg-yellow-500 text-black' },
+  { level: 5, name: 'Laranja', color: 'bg-orange-500 text-white' },
+  { level: 6, name: 'Verde', color: 'bg-green-600 text-white' },
+  { level: 7, name: 'Vermelho', color: 'bg-red-600 text-white' },
+  { level: 8, name: 'Preto', color: 'bg-black text-white border border-[#D4AF37]' },
+];
+
 interface RosterStudent {
     full_name: string;
     avatar_url: string;
@@ -320,17 +331,24 @@ export default function ClassSelection() {
                 const activeBookings = (cls.bookings || []).filter((b: any) => b.status === 'agendado');
                 const isFull = activeBookings.length >= (cls.capacity || cls.max_students || 6);
                 const isBooked = bookedClassIds.includes(cls.id);
+                const isWristbandLocked = (cls.wristband_level || 1) > (profile?.wristband_level || 1);
+                const wristband = WRISTBANDS.find(w => w.level === (cls.wristband_level || 1));
 
                 return (
                   <div key={cls.id} className="bg-surface-bright p-6 rounded-[32px] border-2 border-outline-variant shadow-sm transition-all group overflow-hidden relative">
                     <div className="flex items-center justify-between relative z-10">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-4">
-                          <div className={`w-14 h-14 ${isLocked ? 'bg-surface-container' : 'bg-secondary-container'} rounded-2xl flex items-center justify-center ${isLocked ? 'text-on-surface-variant/30' : 'text-secondary'} shadow-inner group-hover:scale-110 transition-transform`}>
-                            <span className="material-symbols-outlined text-3xl font-bold">{isLocked ? 'lock' : 'sports_volleyball'}</span>
+                          <div className={`w-14 h-14 ${isLocked || isWristbandLocked ? 'bg-surface-container' : 'bg-secondary-container'} rounded-2xl flex items-center justify-center ${isLocked || isWristbandLocked ? 'text-on-surface-variant/30' : 'text-secondary'} shadow-inner group-hover:scale-110 transition-transform`}>
+                            <span className="material-symbols-outlined text-3xl font-bold">{isLocked || isWristbandLocked ? 'lock' : 'sports_volleyball'}</span>
                           </div>
                           <div>
-                            <p className="text-[10px] font-extrabold text-secondary uppercase tracking-[0.15em] mb-0.5">{cls.court}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-[10px] font-extrabold text-secondary uppercase tracking-[0.15em]">{cls.court}</p>
+                              <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${wristband?.color}`}>
+                                {wristband?.name}
+                              </span>
+                            </div>
                             <h4 className="font-headline font-black text-xl text-on-surface leading-tight tracking-tight">{cls.name}</h4>
                             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">Prof. {cls.teacher?.full_name || 'PAPEL FUTEVÔLEI'}</p>
                           </div>
@@ -355,15 +373,15 @@ export default function ClassSelection() {
 
                         <button 
                           onClick={() => handleBooking(cls)}
-                          disabled={bookingLoading === cls.id || isFull || isLocked || isPast || profile?.plan_status !== 'ativo' || isBooked}
+                          disabled={bookingLoading === cls.id || isFull || isLocked || isPast || profile?.plan_status !== 'ativo' || isBooked || isWristbandLocked}
                           className={`h-14 px-8 rounded-2xl font-headline font-extrabold text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95
-                            ${isFull || isLocked || isPast || profile?.plan_status !== 'ativo' || isBooked
+                            ${isFull || isLocked || isPast || profile?.plan_status !== 'ativo' || isBooked || isWristbandLocked
                               ? 'bg-surface-container-highest text-on-surface-variant/30 cursor-not-allowed shadow-none'
                               : 'bg-primary text-on-primary hover:opacity-90'
                             }
                           `}
                         >
-                          {isBooked ? 'Agendado' : isPast ? 'Concluída' : isLocked ? 'Em 48h' : isFull ? 'Lotado' : (bookingLoading === cls.id ? '...' : 'Check-in')}
+                          {isBooked ? 'Agendado' : isPast ? 'Concluída' : isLocked ? 'Em 48h' : isWristbandLocked ? 'Nível Bloqueado' : isFull ? 'Lotado' : (bookingLoading === cls.id ? '...' : 'Check-in')}
                         </button>
                     </div>
                   </div>

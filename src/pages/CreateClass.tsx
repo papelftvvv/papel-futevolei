@@ -18,6 +18,7 @@ export default function CreateClass() {
   const [court, setCourt] = useState('Quadra 1');
   const [unitId, setUnitId] = useState(activeUnit?.id || '');
   const [units, setUnits] = useState<any[]>([]);
+  const [wristbandLevel, setWristbandLevel] = useState(1);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,7 +52,8 @@ export default function CreateClass() {
         end_time: endDateTime.toISOString(),
         capacity,
         court,
-        unit_id: unitId
+        unit_id: unitId,
+        wristband_level: wristbandLevel
       });
 
       if (error) throw error;
@@ -137,6 +139,22 @@ export default function CreateClass() {
                   className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
                   min="1" max="20" required
                 />
+             </div>
+             <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Nível da Pulseira Requerido</label>
+                <select 
+                  value={wristbandLevel} onChange={e => setWristbandLevel(parseInt(e.target.value))}
+                  className="w-full h-14 px-6 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary transition-all font-bold"
+                >
+                  <option value={1}>⬜ Branco (Iniciante N1)</option>
+                  <option value={2}>🩶 Cinza (Iniciante N2)</option>
+                  <option value={3}>🔵 Azul (Intermediário N1)</option>
+                  <option value={4}>🟡 Amarelo (Intermediário N2)</option>
+                  <option value={5}>🟠 Laranja (Avançado N1)</option>
+                  <option value={6}>🟢 Verde (Avançado N2)</option>
+                  <option value={7}>🔴 Vermelho (Pro N1)</option>
+                  <option value={8}>⬛ Preto (Profissional)</option>
+                </select>
              </div>
           </section>
 
