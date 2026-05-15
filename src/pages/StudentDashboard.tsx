@@ -12,6 +12,7 @@ import { useOneSignal } from '../hooks/useOneSignal';
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
+  const [authUser, setAuthUser] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [bookings, setBookings] = useState<any[]>([]);
   const [courtRentals, setCourtRentals] = useState<any[]>([]);
@@ -75,6 +76,7 @@ export default function StudentDashboard() {
           .eq('id', user.id)
           .single();
         setProfile(profileData);
+        setAuthUser(user);
 
         const { data: bookingsData } = await supabase
           .from('bookings')
@@ -713,6 +715,13 @@ export default function StudentDashboard() {
   })();
 
   const capitalizedMonth = selectedDate.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, (c) => c.toUpperCase());
+  const displayName = profile?.full_name
+    ? profile.full_name.split(' ')[0]
+    : authUser?.user_metadata?.full_name
+    ? authUser.user_metadata.full_name.split(' ')[0]
+    : authUser?.user_metadata?.name
+    ? authUser.user_metadata.name.split(' ')[0]
+    : authUser?.email?.split('@')[0] || '...';
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal PAPEL FUTEVÔLEI...</div>;
 
@@ -725,7 +734,7 @@ export default function StudentDashboard() {
           {/* 1. Welcome Header & Vagas */}
           <section className="flex justify-between items-start text-white">
             <div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800 }} className="text-4xl leading-tight">Olá, {firstName}!</h2>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800 }} className="text-4xl leading-tight">Olá, {displayName}!</h2>
               <p className="text-white/70 font-medium mt-1 uppercase text-[10px] tracking-widest leading-none">
                   {profile?.plan ? `${profile.plan.name} • ${profile.plan.classes_per_week >= 99 ? '∞' : weeklyBookingsCount + '/' + profile.plan.classes_per_week + ' no ciclo'}` : 'Sem plano ativo'}
               </p>
@@ -977,9 +986,7 @@ export default function StudentDashboard() {
                           </button>
                       );
                   }) : (
-                      <div className="text-center py-10 bg-white/30 rounded-[32px] border-2 border-dashed border-primary-container/10">
-                           <p className="text-on-surface-variant text-[10px] font-black uppercase tracking-widest opacity-40 italic">Nenhuma quadra reservada.</p>
-                      </div>
+                  <p className="text-center py-6 text-on-surface-variant/40 text-[10px] font-black uppercase tracking-widest italic">Nenhuma quadra reservada.</p>
                   )}
               </div>
           </section>
@@ -1011,9 +1018,7 @@ export default function StudentDashboard() {
                           </button>
                       );
                   }) : (
-                      <div className="text-center py-10 bg-white/30 rounded-[32px] border-2 border-dashed border-primary-container/10">
-                           <p className="text-on-surface-variant text-[10px] font-black uppercase tracking-widest opacity-40 italic">Nenhum Day Use solicitado.</p>
-                      </div>
+                  <p className="text-center py-6 text-on-surface-variant/40 text-[10px] font-black uppercase tracking-widest italic">Nenhum Day Use solicitado.</p>
                   )}
               </div>
           </section>
