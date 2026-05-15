@@ -18,7 +18,7 @@ export default function StudentNavbar({ activePage }: StudentNavbarProps) {
       </Link>
       <Link to="/book-class" className={activePage === 'agendar' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined text-sm" style={activePage === 'agendar' ? { fontVariationSettings: "'FILL' 1" } : undefined}>sports_volleyball</span>
-        <span style={labelStyle}>Agendar</span>
+        <span style={labelStyle}>Check-in</span>
       </Link>
       <Link to="/ranking" className={activePage === 'ranking' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined text-sm" style={activePage === 'ranking' ? { fontVariationSettings: "'FILL' 1" } : undefined}>workspace_premium</span>
