@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 
@@ -43,14 +43,31 @@ export default function ManageStudents() {
   async function fetchStudents() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+
+      // Busca perfis sem tentar fazer join com loyalty_points (sem FK explícita)
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('*, loyalty_points(balance)')
+        .select('*')
         .eq('role', 'student')
         .order('full_name', { ascending: true });
-      
-      if (error) throw error;
-      setStudents(data || []);
+
+      if (profilesError) throw profilesError;
+
+      // Busca os saldos de pontos separadamente
+      const { data: pointsData } = await supabase
+        .from('loyalty_points')
+        .select('user_id, balance');
+
+      // Mapeia os pontos por user_id para merge eficiente
+      const pointsMap = new Map((pointsData || []).map((p: any) => [p.user_id, p.balance]));
+
+      // Mescla os dados
+      const merged = (profilesData || []).map((profile: any) => ({
+        ...profile,
+        loyalty_points: { balance: pointsMap.get(profile.id) || 0 }
+      }));
+
+      setStudents(merged);
     } catch (error: any) {
       alert(error.message);
     } finally {
