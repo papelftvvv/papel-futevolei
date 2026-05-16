@@ -43,6 +43,35 @@ export default function StudentDashboard() {
   const [roster, setRoster] = useState<{ className: string, students: any[] } | null>(null);
   const [loadingRoster, setLoadingRoster] = useState(false);
 
+  async function findNextDayWithClasses() {
+    try {
+      setLoading(true);
+      const endOfSelectedDay = new Date(selectedDate);
+      endOfSelectedDay.setHours(23, 59, 59, 999);
+
+      const { data, error } = await supabase
+        .from('classes')
+        .select('start_time')
+        .eq('unit_id', activeUnit?.id)
+        .gt('start_time', endOfSelectedDay.toISOString())
+        .order('start_time', { ascending: true })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const nextClassDate = new Date(data[0].start_time);
+        setSelectedDate(nextClassDate);
+      } else {
+        alert('Nenhuma aula futura encontrada!');
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Rental Management States
   const [selectedRental, setSelectedRental] = useState<any>(null);
   const [rentalParticipants, setRentalParticipants] = useState<any[]>([]);
@@ -1002,7 +1031,7 @@ export default function StudentDashboard() {
                 <Link to="/book-class" className="text-[10px] font-black flex items-center gap-1 uppercase tracking-widest text-primary">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
               </div>
               <div className="space-y-3">
-                {dayClasses.map(cls => {
+                {dayClasses.length > 0 ? dayClasses.map(cls => {
                     const isPast = new Date(cls.start_time) < new Date();
                     const isBooked = bookings.some(b => b.classes.id === cls.id && b.status === 'agendado');
                     const bookedCount = (cls.bookings || []).filter((b: any) => b.status === 'agendado').length;
@@ -1046,7 +1075,18 @@ export default function StudentDashboard() {
                             </button>
                         </div>
                     );
-                })}
+                }) : (
+                    <div className="py-10 text-center space-y-4">
+                       <p className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-widest italic">Nenhuma aula para este dia.</p>
+                       <button 
+                         onClick={findNextDayWithClasses}
+                         className="mt-2 bg-primary text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 mx-auto shadow-md hover:bg-primary/90 active:scale-95 transition-all text-[10px] uppercase tracking-widest"
+                       >
+                         <span className="material-symbols-outlined text-sm">search</span>
+                         Procurar próximo dia com aulas
+                       </button>
+                    </div>
+                )}
               </div>
             </div>
           </section>
