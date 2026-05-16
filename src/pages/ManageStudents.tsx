@@ -13,7 +13,7 @@ interface Profile {
   plan_status: string;
   wristband_level?: number;
   loyalty_points?: {
-      balance: number;
+    balance: number;
   };
 }
 
@@ -29,11 +29,11 @@ const WRISTBANDS = [
 ];
 
 interface Transaction {
-    id: string;
-    amount: number;
-    type: 'credit' | 'debit';
-    description: string;
-    created_at: string;
+  id: string;
+  amount: number;
+  type: 'credit' | 'debit';
+  description: string;
+  created_at: string;
 }
 
 export default function ManageStudents() {
@@ -109,7 +109,7 @@ export default function ManageStudents() {
         .select();
 
       if (error) throw error;
-      
+
       if (!data || data.length === 0) {
         throw new Error('Nenhuma alteração foi salva no banco de dados. Isso geralmente acontece por falta de permissão de administrador (RLS) para atualizar perfis de outros usuários.');
       }
@@ -229,7 +229,7 @@ export default function ManageStudents() {
     document.body.removeChild(link);
   };
 
-  const filteredStudents = students.filter(s => 
+  const filteredStudents = students.filter(s =>
     s.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.phone?.includes(searchTerm)
@@ -246,7 +246,7 @@ export default function ManageStudents() {
             <h1 className="font-headline font-extrabold text-3xl tracking-tight leading-none text-white">Alunos Cadastrados</h1>
             <p className="text-white/50 text-sm font-medium mt-1">Visualize, edite e exporte os dados da base.</p>
           </div>
-          <button 
+          <button
             onClick={exportCSV}
             className="bg-white text-black px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-white/90 active:scale-95 transition-all text-xs uppercase tracking-widest"
           >
@@ -265,8 +265,8 @@ export default function ManageStudents() {
         {/* Search Bar */}
         <div className="relative group">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/40 group-focus-within:text-white transition-colors">search</span>
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Buscar por nome, email ou telefone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -277,7 +277,7 @@ export default function ManageStudents() {
         {/* Students Table/Cards */}
         <div className="grid grid-cols-1 gap-4">
           {loading ? (
-             <div className="py-20 text-center font-bold text-primary animate-pulse uppercase tracking-widest text-xs">Carregando base de alunos...</div>
+            <div className="py-20 text-center font-bold text-primary animate-pulse uppercase tracking-widest text-xs">Carregando base de alunos...</div>
           ) : filteredStudents.length > 0 ? (
             filteredStudents.map(student => (
               <div key={student.id} className="bg-zinc-900 border border-white/10 p-6 rounded-[32px] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:bg-zinc-800">
@@ -287,20 +287,20 @@ export default function ManageStudents() {
                   </div>
                   <div>
                     <h3 className="font-headline font-black text-xl text-white leading-tight flex items-center gap-2 flex-wrap">
-                        {student.full_name}
-                        <button 
-                            onClick={() => {
-                                setManagingPoints(student);
-                                fetchHistory(student.id);
-                            }}
-                            className="bg-[#D4AF37]/10 text-[#D4AF37] px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:bg-[#D4AF37] hover:text-white transition-all shadow-sm"
-                        >
-                            <span className="material-symbols-outlined text-[12px]">workspace_premium</span>
-                            {student.loyalty_points?.balance || 0} PTS
-                        </button>
-                        <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.color}`}>
-                            {WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.name}
-                        </span>
+                      {student.full_name}
+                      <button
+                        onClick={() => {
+                          setManagingPoints(student);
+                          fetchHistory(student.id);
+                        }}
+                        className="bg-[#D4AF37]/10 text-[#D4AF37] px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:bg-[#D4AF37] hover:text-white transition-all shadow-sm"
+                      >
+                        <span className="material-symbols-outlined text-[12px]">workspace_premium</span>
+                        {student.loyalty_points?.balance || 0} PTS
+                      </button>
+                      <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.color}`}>
+                        {WRISTBANDS.find(w => w.level === (student.wristband_level || 1))?.name}
+                      </span>
                     </h3>
                     <p className="text-white/50 text-xs font-medium flex items-center gap-1">
                       <span className="material-symbols-outlined text-[10px]">mail</span> {student.email}
@@ -316,13 +316,13 @@ export default function ManageStudents() {
                     <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Plano</p>
                     <p className={`text-xs font-bold ${student.plan_status === 'ativo' ? 'text-primary' : 'text-error'}`}>{student.plan_status?.toUpperCase() || 'NENHUM'}</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setEditingStudent(student)}
                     className="flex-1 md:flex-none w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
                   >
                     <span className="material-symbols-outlined">edit</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDeleteStudent(student.id)}
                     className="flex-1 md:flex-none w-12 h-12 bg-red-50 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
                   >
@@ -348,33 +348,33 @@ export default function ManageStudents() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Nome Completo</label>
-                  <input 
-                    value={editingStudent.full_name} 
-                    onChange={e => setEditingStudent({...editingStudent, full_name: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
+                  <input
+                    value={editingStudent.full_name}
+                    onChange={e => setEditingStudent({ ...editingStudent, full_name: e.target.value })}
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white"
                   />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Email</label>
-                  <input 
-                    value={editingStudent.email} 
-                    onChange={e => setEditingStudent({...editingStudent, email: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
+                  <input
+                    value={editingStudent.email}
+                    onChange={e => setEditingStudent({ ...editingStudent, email: e.target.value })}
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white"
                   />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Telefone</label>
-                  <input 
-                    value={editingStudent.phone} 
-                    onChange={e => setEditingStudent({...editingStudent, phone: e.target.value})}
-                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white" 
+                  <input
+                    value={editingStudent.phone}
+                    onChange={e => setEditingStudent({ ...editingStudent, phone: e.target.value })}
+                    className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold text-white"
                   />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Status do Plano</label>
-                  <select 
-                    value={editingStudent.plan_status} 
-                    onChange={e => setEditingStudent({...editingStudent, plan_status: e.target.value})}
+                  <select
+                    value={editingStudent.plan_status}
+                    onChange={e => setEditingStudent({ ...editingStudent, plan_status: e.target.value })}
                     className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold appearance-none text-white"
                   >
                     <option value="nenhum">Nenhum</option>
@@ -384,9 +384,9 @@ export default function ManageStudents() {
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-white/50 ml-1">Nível da Pulseira</label>
-                  <select 
-                    value={editingStudent.wristband_level || 1} 
-                    onChange={e => setEditingStudent({...editingStudent, wristband_level: parseInt(e.target.value)})}
+                  <select
+                    value={editingStudent.wristband_level || 1}
+                    onChange={e => setEditingStudent({ ...editingStudent, wristband_level: parseInt(e.target.value) })}
                     className="w-full h-14 px-5 rounded-2xl bg-zinc-800 border border-white/10 font-bold appearance-none text-white"
                   >
                     {WRISTBANDS.map(w => (
@@ -397,13 +397,13 @@ export default function ManageStudents() {
               </div>
 
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={handleUpdateStudent}
                   className="flex-1 h-16 bg-white text-black rounded-2xl font-headline font-black text-lg shadow-xl active:scale-95 transition-transform"
                 >
                   SALVAR
                 </button>
-                <button 
+                <button
                   onClick={() => handleDeleteStudent(editingStudent.id)}
                   className="px-6 h-16 bg-red-50 text-red-500 rounded-2xl font-bold flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm active:scale-95"
                 >
@@ -416,99 +416,99 @@ export default function ManageStudents() {
 
         {/* Loyalty Points Modal */}
         {managingPoints && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-black/60 animate-in fade-in duration-300">
-                <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col md:flex-row h-[80vh] md:h-auto">
-                    {/* Left Side: History */}
-                    <div className="flex-1 p-8 bg-surface-container/30 border-r border-primary-container/10 overflow-y-auto custom-scrollbar">
-                        <div className="mb-6">
-                            <h3 className="font-headline font-black text-xl text-on-surface flex items-center gap-2">
-                                <span className="material-symbols-outlined text-[#D4AF37]">history</span>
-                                HISTÓRICO
-                            </h3>
-                            <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Atividades recentes de {managingPoints.full_name.split(' ')[0]}</p>
-                        </div>
-
-                        {loadingHistory ? (
-                            <div className="py-10 text-center animate-pulse text-[10px] font-black text-primary/40 uppercase tracking-widest">Carregando extrato...</div>
-                        ) : history.length > 0 ? (
-                            <div className="space-y-3">
-                                {history.map(t => (
-                                    <div key={t.id} className="bg-white p-4 rounded-2xl border border-primary-container/5 shadow-sm">
-                                        <div className="flex justify-between items-start">
-                                            <p className="text-[11px] font-bold text-on-surface leading-tight">{t.description}</p>
-                                            <span className={`text-[11px] font-black ${t.amount > 0 ? 'text-primary' : 'text-error'}`}>
-                                                {t.amount > 0 ? '+' : ''}{t.amount}
-                                            </span>
-                                        </div>
-                                        <p className="text-[9px] font-medium text-on-surface-variant mt-1">
-                                            {new Date(t.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="py-10 text-center text-on-surface-variant/40 italic text-xs">Nenhuma transação encontrada.</div>
-                        )}
-                    </div>
-
-                    {/* Right Side: Adjustment Panel */}
-                    <div className="w-full md:w-[320px] p-8 space-y-8 bg-white relative">
-                        <button onClick={() => setManagingPoints(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center material-symbols-outlined opacity-40">close</button>
-                        
-                        <div>
-                            <div className="bg-[#D4AF37]/10 p-6 rounded-[32px] text-center border-2 border-[#D4AF37]/20">
-                                <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] mb-1">Saldo Atual</p>
-                                <h4 className="font-headline font-black text-4xl text-[#D4AF37] tracking-tighter italic">
-                                    {(students.find(s => s.id === managingPoints.id)?.loyalty_points as any)?.balance || 0}
-                                </h4>
-                                <p className="text-[10px] font-bold text-[#D4AF37]/60 uppercase">PAPEL FUTEVÔLEI Points</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-2">Pontos para ajustar</label>
-                                <input 
-                                    type="number" 
-                                    value={adjustmentValue}
-                                    onChange={e => setAdjustmentValue(e.target.value)}
-                                    placeholder="Ex: 50"
-                                    className="w-full h-14 px-6 rounded-2xl bg-surface-container font-black text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-2">Justificativa</label>
-                                <textarea 
-                                    value={adjustmentReason}
-                                    onChange={e => setAdjustmentReason(e.target.value)}
-                                    placeholder="Motivo do ajuste..."
-                                    className="w-full p-4 rounded-2xl bg-surface-container font-bold text-xs focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
-                                    rows={3}
-                                />
-                            </div>
-
-                            <div className="flex gap-3">
-                                <button 
-                                    onClick={() => handlePointsAdjustment('credit')}
-                                    className="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2"
-                                >
-                                    <span className="material-symbols-outlined text-sm">add</span> CREDITAR
-                                </button>
-                                <button 
-                                    onClick={() => handlePointsAdjustment('debit')}
-                                    className="flex-1 h-14 bg-error text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-error/20 active:scale-95 transition-all flex items-center justify-center gap-2"
-                                >
-                                    <span className="material-symbols-outlined text-sm">remove</span> DEBITAR
-                                </button>
-                            </div>
-                        </div>
-
-                        <p className="text-[9px] font-medium text-center text-on-surface-variant px-4 italic leading-tight">
-                            *O ajuste manual é lançado imediatamente e notificado no extrato do aluno.
-                        </p>
-                    </div>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 backdrop-blur-md bg-black/60 animate-in fade-in duration-300">
+            <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col md:flex-row h-[80vh] md:h-auto">
+              {/* Left Side: History */}
+              <div className="flex-1 p-8 bg-surface-container/30 border-r border-primary-container/10 overflow-y-auto custom-scrollbar">
+                <div className="mb-6">
+                  <h3 className="font-headline font-black text-xl text-on-surface flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[#D4AF37]">history</span>
+                    HISTÓRICO
+                  </h3>
+                  <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Atividades recentes de {managingPoints.full_name.split(' ')[0]}</p>
                 </div>
+
+                {loadingHistory ? (
+                  <div className="py-10 text-center animate-pulse text-[10px] font-black text-primary/40 uppercase tracking-widest">Carregando extrato...</div>
+                ) : history.length > 0 ? (
+                  <div className="space-y-3">
+                    {history.map(t => (
+                      <div key={t.id} className="bg-white p-4 rounded-2xl border border-primary-container/5 shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <p className="text-[11px] font-bold text-on-surface leading-tight">{t.description}</p>
+                          <span className={`text-[11px] font-black ${t.amount > 0 ? 'text-primary' : 'text-error'}`}>
+                            {t.amount > 0 ? '+' : ''}{t.amount}
+                          </span>
+                        </div>
+                        <p className="text-[9px] font-medium text-on-surface-variant mt-1">
+                          {new Date(t.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-10 text-center text-on-surface-variant/40 italic text-xs">Nenhuma transação encontrada.</div>
+                )}
+              </div>
+
+              {/* Right Side: Adjustment Panel */}
+              <div className="w-full md:w-[320px] p-8 space-y-8 bg-white relative">
+                <button onClick={() => setManagingPoints(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center material-symbols-outlined opacity-40">close</button>
+
+                <div>
+                  <div className="bg-[#D4AF37]/10 p-6 rounded-[32px] text-center border-2 border-[#D4AF37]/20">
+                    <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] mb-1">Saldo Atual</p>
+                    <h4 className="font-headline font-black text-4xl text-[#D4AF37] tracking-tighter italic">
+                      {(students.find(s => s.id === managingPoints.id)?.loyalty_points as any)?.balance || 0}
+                    </h4>
+                    <p className="text-[10px] font-bold text-[#D4AF37]/60 uppercase">PAPEL FUTEVÔLEI Points</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-2">Pontos para ajustar</label>
+                    <input
+                      type="number"
+                      value={adjustmentValue}
+                      onChange={e => setAdjustmentValue(e.target.value)}
+                      placeholder="Ex: 50"
+                      className="w-full h-14 px-6 rounded-2xl bg-surface-container font-black text-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-2">Justificativa</label>
+                    <textarea
+                      value={adjustmentReason}
+                      onChange={e => setAdjustmentReason(e.target.value)}
+                      placeholder="Motivo do ajuste..."
+                      className="w-full p-4 rounded-2xl bg-surface-container font-bold text-xs focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handlePointsAdjustment('credit')}
+                      className="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span> CREDITAR
+                    </button>
+                    <button
+                      onClick={() => handlePointsAdjustment('debit')}
+                      className="flex-1 h-14 bg-error text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-error/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-sm">remove</span> DEBITAR
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-[9px] font-medium text-center text-on-surface-variant px-4 italic leading-tight">
+                  *O ajuste manual é lançado imediatamente e notificado no extrato do aluno.
+                </p>
+              </div>
             </div>
+          </div>
         )}
       </main>
 

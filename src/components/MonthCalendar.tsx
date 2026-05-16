@@ -196,7 +196,7 @@ export default function MonthCalendar({ classes, units, onSelectDate }: MonthCal
                   return (
                     <div 
                       key={c.id}
-                      className={`text-[8px] font-bold p-1 rounded-md border-2
+                      className={`text-[8px] font-bold p-1 rounded-md border-4
                         ${isCTL ? 'bg-black text-white' : 'bg-orange-500 text-white'}
                       `}
                       style={{ borderColor: wristbandColor }}
