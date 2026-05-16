@@ -88,7 +88,7 @@ export default function ManageTeachers() {
           });
 
           if (error) throw error;
-          alert('Professor cadastrado! Ele deve confirmar o e-mail para ativar a conta.');
+          alert('Professor cadastrado com sucesso!');
         }
       }
 
