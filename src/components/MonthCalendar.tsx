@@ -28,6 +28,7 @@ const WRISTBAND_COLORS: { [key: number]: string } = {
 
 export default function MonthCalendar({ classes, units, onSelectDate }: MonthCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -41,15 +42,28 @@ export default function MonthCalendar({ classes, units, onSelectDate }: MonthCal
   // Generate days array
   const days = [];
   
-  // Fill empty slots before first day (Monday as first day)
-  const emptySlots = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
-  for (let i = 0; i < emptySlots; i++) {
-    days.push(null);
-  }
+  if (viewMode === 'month') {
+    // Fill empty slots before first day (Monday as first day)
+    const emptySlots = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
+    for (let i = 0; i < emptySlots; i++) {
+      days.push(null);
+    }
 
-  // Fill days of the month
-  for (let i = 1; i <= totalDays; i++) {
-    days.push(new Date(year, month, i));
+    // Fill days of the month
+    for (let i = 1; i <= totalDays; i++) {
+      days.push(new Date(year, month, i));
+    }
+  } else {
+    // Fill days of the current week
+    const currentDay = currentDate.getDay(); // 0 = Sun, 1 = Mon
+    const diff = currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
+    const monday = new Date(currentDate.getFullYear(), currentDate.getMonth(), diff);
+    
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      days.push(day);
+    }
   }
 
   const monthNames = [
@@ -59,12 +73,24 @@ export default function MonthCalendar({ classes, units, onSelectDate }: MonthCal
 
   const dayNames = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
+  const handlePrev = () => {
+    if (viewMode === 'month') {
+      setCurrentDate(new Date(year, month - 1, 1));
+    } else {
+      const prevWeek = new Date(currentDate);
+      prevWeek.setDate(currentDate.getDate() - 7);
+      setCurrentDate(prevWeek);
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
+  const handleNext = () => {
+    if (viewMode === 'month') {
+      setCurrentDate(new Date(year, month + 1, 1));
+    } else {
+      const nextWeek = new Date(currentDate);
+      nextWeek.setDate(currentDate.getDate() + 7);
+      setCurrentDate(nextWeek);
+    }
   };
 
   const getClassesForDay = (date: Date) => {
@@ -73,25 +99,46 @@ export default function MonthCalendar({ classes, units, onSelectDate }: MonthCal
       return classDate.getDate() === date.getDate() &&
              classDate.getMonth() === date.getMonth() &&
              classDate.getFullYear() === date.getFullYear();
-    });
+    }).sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
   };
 
   return (
     <div className="bg-zinc-900 rounded-[32px] border border-white/10 overflow-hidden text-white p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-headline font-black text-xl uppercase text-white">
-          {monthNames[month]} {year}
-        </h3>
-        <div className="flex gap-2">
+        <div>
+          <h3 className="font-headline font-black text-xl uppercase text-white">
+            {monthNames[month]} {year}
+          </h3>
+          {viewMode === 'week' && (
+            <p className="text-white/50 text-xs font-bold uppercase tracking-widest mt-1">Visão Semanal</p>
+          )}
+        </div>
+        <div className="flex gap-2 items-center">
+          {/* View Toggle */}
+          <div className="flex bg-white/5 rounded-lg p-1 mr-2">
+            <button
+              onClick={() => setViewMode('month')}
+              className={`text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-md transition-colors ${viewMode === 'month' ? 'bg-primary text-black' : 'text-white/70 hover:text-white'}`}
+            >
+              Mês
+            </button>
+            <button
+              onClick={() => setViewMode('week')}
+              className={`text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-md transition-colors ${viewMode === 'week' ? 'bg-primary text-black' : 'text-white/70 hover:text-white'}`}
+            >
+              Semana
+            </button>
+          </div>
+
           <button 
-            onClick={handlePrevMonth}
+            onClick={handlePrev}
             className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
           >
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
           <button 
-            onClick={handleNextMonth}
+            onClick={handleNext}
             className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
           >
             <span className="material-symbols-outlined">chevron_right</span>
@@ -149,7 +196,7 @@ export default function MonthCalendar({ classes, units, onSelectDate }: MonthCal
                   return (
                     <div 
                       key={c.id}
-                      className={`text-[8px] font-bold p-1 rounded-md border
+                      className={`text-[8px] font-bold p-1 rounded-md border-2
                         ${isCTL ? 'bg-black text-white' : 'bg-orange-500 text-white'}
                       `}
                       style={{ borderColor: wristbandColor }}
