@@ -96,7 +96,7 @@ export default function ManageStudents() {
   async function handleUpdateStudent() {
     if (!editingStudent) return;
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({
           full_name: editingStudent.full_name,
@@ -105,9 +105,15 @@ export default function ManageStudents() {
           plan_status: editingStudent.plan_status,
           wristband_level: editingStudent.wristband_level
         })
-        .eq('id', editingStudent.id);
+        .eq('id', editingStudent.id)
+        .select();
 
       if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        throw new Error('Nenhuma alteração foi salva no banco de dados. Isso geralmente acontece por falta de permissão de administrador (RLS) para atualizar perfis de outros usuários.');
+      }
+
       setStudents(prev => prev.map(s => s.id === editingStudent.id ? editingStudent : s));
       setEditingStudent(null);
       showSuccess('Perfil atualizado com sucesso!');
