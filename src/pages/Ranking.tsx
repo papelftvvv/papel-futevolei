@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
@@ -24,6 +24,17 @@ const WRISTBANDS = [
   { level: 8, name: 'Preto', color: 'bg-black text-white border border-[#D4AF37]' },
 ];
 
+const BORDER_COLORS: { [key: number]: string } = {
+  1: 'border-white',
+  2: 'border-zinc-500',
+  3: 'border-blue-600',
+  4: 'border-yellow-500',
+  5: 'border-orange-500',
+  6: 'border-green-600',
+  7: 'border-red-600',
+  8: 'border-[#D4AF37]'
+};
+
 export default function Ranking() {
   const navigate = useNavigate();
   const [ranking, setRanking] = useState<(RankingUser & { wristband_level?: number })[]>([]);
@@ -31,6 +42,7 @@ export default function Ranking() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // 0 = Geral, 1 = Branco, etc.
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -108,6 +120,29 @@ export default function Ranking() {
     ...WRISTBANDS.map(w => ({ id: w.level, name: w.name, color: w.color }))
   ];
 
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const children = containerRef.current.children;
+    const containerCenter = containerRef.current.scrollLeft + containerRef.current.clientWidth / 2;
+    
+    let closestIndex = 0;
+    let minDistance = Infinity;
+    
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i] as HTMLElement;
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = i;
+      }
+    }
+    
+    if (tabs[closestIndex] && activeTab !== tabs[closestIndex].id) {
+      setActiveTab(tabs[closestIndex].id);
+    }
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-white uppercase animate-pulse bg-black">Calculando Pódio PAPEL FUTEVÔLEI...</div>;
 
   return (
@@ -150,12 +185,14 @@ export default function Ranking() {
 
           {/* Horizontal Scroll Container */}
           <div 
+            ref={containerRef}
+            onScroll={handleScroll}
             className="overflow-x-auto flex snap-x snap-mandatory no-scrollbar px-6 gap-6"
           >
             {tabs.map(tab => {
                 const filteredRanking = tab.id === 0 
                   ? ranking 
-                  : ranking.filter(u => u.wristband_level === tab.id);
+                  : ranking.filter(u => Number(u.wristband_level) === tab.id);
                 
                 const tabTop3 = filteredRanking.slice(0, 3);
                 const tabOthers = filteredRanking.slice(3);
@@ -230,7 +267,7 @@ export default function Ranking() {
                               return (
                                   <div key={user.user_id} className={`flex items-center gap-4 p-4 transition-colors ${isMe ? 'bg-primary/10' : ''}`}>
                                       <span className="w-6 text-sm font-black text-white/40">#{index + 4}</span>
-                                      <div className="w-10 h-10 rounded-full overflow-hidden bg-primary/10">
+                                      <div className={`w-10 h-10 rounded-full overflow-hidden border-2 ${BORDER_COLORS[Number(user.wristband_level)] || 'border-white/10'} bg-primary/10`}>
                                           <img src={user.avatar_url || 'https://via.placeholder.com/150'} className="w-full h-full object-cover" />
                                       </div>
                                       <div className="flex-1">
