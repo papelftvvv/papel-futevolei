@@ -118,7 +118,7 @@ export default function StudentDashboard() {
         // Busca agendamentos (filtra por unidade APENAS nas aulas)
         const { data: bookingsData } = await supabase
           .from('bookings')
-          .select(`id, status, plan_id, classes:class_id (*, teacher:teacher_id(full_name, email))`)
+          .select(`id, status, plan_id, classes:class_id (*)`)
           .eq('student_id', user.id)
           .neq('status', 'cancelado')
           .order('created_at', { ascending: false });

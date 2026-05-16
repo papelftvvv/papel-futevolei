@@ -66,7 +66,6 @@ export default function ClassSelection() {
         .from('classes')
         .select(`
           *,
-          teacher:teacher_id (full_name),
           bookings(status)
         `)
         .eq('unit_id', activeUnit?.id)
