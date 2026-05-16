@@ -40,7 +40,7 @@ export default function CreateClass() {
       if (!unitId && units && units.length > 0) setUnitId(units[0].id);
 
       // Buscar aulas existentes para o calendário
-      const { data: classesData } = await supabase.from('classes').select('*');
+      const { data: classesData } = await supabase.from('classes').select('*').order('start_time', { ascending: true });
       setClasses(classesData || []);
     }
     fetchData();
@@ -91,7 +91,7 @@ export default function CreateClass() {
       alert(`Aula(s) criada(s) com sucesso! Total: ${classesToInsert.length}`);
       
       // Atualizar lista de aulas
-      const { data: classesData } = await supabase.from('classes').select('*');
+      const { data: classesData } = await supabase.from('classes').select('*').order('start_time', { ascending: true });
       setClasses(classesData || []);
       
     } catch (error: any) {
