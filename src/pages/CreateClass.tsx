@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopAppBar from '../components/TopAppBar';
-import TeacherNavbar from '../components/TeacherNavbar';
 import MonthCalendar from '../components/MonthCalendar';
 import { supabase } from '../lib/supabase';
 import { useUnit } from '../contexts/UnitContext';
@@ -244,7 +243,6 @@ export default function CreateClass() {
           </div>
         </div>
       </main>
-      <TeacherNavbar activePage="agenda" />
     </div>
   );
 }
