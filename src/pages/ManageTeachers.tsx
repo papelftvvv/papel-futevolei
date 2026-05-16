@@ -52,17 +52,19 @@ export default function ManageTeachers() {
         alert('Professor atualizado com sucesso!');
       } else {
         // Lógica de Criação ou Promoção
-        // Primeiro verificamos se o usuário já existe na tabela profiles pelo NOME
+        // Primeiro verificamos se o usuário já existe na tabela profiles pelo NOME (usando busca aproximada)
         // Buscamos pelo nome porque o e-mail não é salvo na tabela profiles no cadastro inicial do app
-        const { data: existingProfile, error: profileError } = await supabase
+        const { data: existingProfiles, error: profileError } = await supabase
           .from('profiles')
-          .select('id, role')
-          .eq('full_name', fullName)
-          .maybeSingle();
+          .select('id, role, full_name')
+          .ilike('full_name', `%${fullName}%`);
 
         if (profileError) throw profileError;
 
-        if (existingProfile) {
+        if (existingProfiles && existingProfiles.length > 0) {
+          // Se encontrou alguém, pegamos o primeiro resultado
+          const existingProfile = existingProfiles[0];
+          
           // Se ele já existe, atualizamos a role dele para 'teacher' e salvamos o e-mail
           const { error: updateError } = await supabase
             .from('profiles')
@@ -73,7 +75,7 @@ export default function ManageTeachers() {
             .eq('id', existingProfile.id);
 
           if (updateError) throw updateError;
-          alert('Este usuário já estava cadastrado como aluno e foi promovido a Professor!');
+          alert(`O usuário '${existingProfile.full_name}' já estava cadastrado e foi promovido a Professor!`);
         } else {
           // Se não existe, criamos a conta normalmente
           const { error } = await supabase.auth.signUp({
