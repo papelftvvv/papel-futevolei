@@ -119,6 +119,35 @@ export default function ClassSelection() {
     }
   }
 
+  async function findNextDayWithClasses() {
+    try {
+      setLoading(true);
+      const endOfSelectedDay = new Date(selectedDate);
+      endOfSelectedDay.setHours(23, 59, 59, 999);
+
+      const { data, error } = await supabase
+        .from('classes')
+        .select('start_time')
+        .eq('unit_id', activeUnit?.id)
+        .gt('start_time', endOfSelectedDay.toISOString())
+        .order('start_time', { ascending: true })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const nextClassDate = new Date(data[0].start_time);
+        setSelectedDate(nextClassDate);
+      } else {
+        alert('Nenhuma aula futura encontrada!');
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function fetchRoster(cls: any) {
     try {
         setLoadingRoster(true);
@@ -395,6 +424,13 @@ export default function ClassSelection() {
                     <p className="text-on-surface font-black text-lg">Sem turmas agendadas</p>
                     <p className="text-on-surface-variant">Selecione outro dia no calendário.</p>
                  </div>
+                 <button 
+                   onClick={findNextDayWithClasses}
+                   className="mt-4 bg-primary text-black px-6 py-3 rounded-2xl font-bold flex items-center gap-2 mx-auto shadow-lg hover:bg-primary/90 active:scale-95 transition-all text-xs uppercase tracking-widest"
+                 >
+                   <span className="material-symbols-outlined text-sm">search</span>
+                   Procurar próximo dia com aulas
+                 </button>
               </div>
             )}
           </div>
