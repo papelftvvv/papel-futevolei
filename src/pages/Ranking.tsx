@@ -147,16 +147,16 @@ export default function Ranking() {
 
   return (
     <SportyBackground topHeight="20%">
-      <div className="pb-32 min-h-screen font-body relative text-white bg-black">
+      <div className="pb-32 min-h-screen font-body relative text-zinc-900 bg-slate-50">
         <TopAppBar title="RANKING MENSAL" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} wristbandLevel={profile?.wristband_level} />
 
         <main className="mt-20 space-y-6">
           {/* Header Title */}
           <div className="text-center space-y-2 px-6">
-            <h2 className="font-headline font-black text-4xl text-white uppercase italic tracking-tighter shadow-sm">
+            <h2 className="font-headline font-black text-4xl text-zinc-900 uppercase italic tracking-tighter shadow-sm">
               RANKING <span className="text-primary">DE ELITE</span>
             </h2>
-            <p className="text-white/50 font-black uppercase text-[10px] tracking-[0.3em] font-body">
+            <p className="text-zinc-500 font-black uppercase text-[10px] tracking-[0.3em] font-body">
               TOP FERAS - DESLIZE PARA O LADO
             </p>
           </div>
@@ -166,10 +166,10 @@ export default function Ranking() {
             {tabs.map(tab => (
               <button
                 key={tab.id}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border border-white/10
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border border-zinc-200
                   ${activeTab === tab.id 
                     ? `${tab.color} shadow-lg scale-105` 
-                    : 'bg-zinc-900 text-white/60'
+                    : 'bg-zinc-100 text-zinc-600'
                   }
                 `}
                 onClick={() => {
@@ -212,7 +212,7 @@ export default function Ranking() {
                               <img src={tabTop3[1].avatar_url || 'https://via.placeholder.com/150'} className="w-16 h-16 rounded-full border-4 border-slate-300 object-cover shadow-lg" />
                               <div className="absolute -top-2 -right-2 bg-slate-300 text-slate-800 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black">2</div>
                           </div>
-                          <p className="mt-2 text-[10px] font-bold text-white/70 uppercase text-center truncate w-full">{tabTop3[1].full_name.split(' ')[0]}</p>
+                          <p className="mt-2 text-[10px] font-bold text-zinc-700 uppercase text-center truncate w-full">{tabTop3[1].full_name.split(' ')[0]}</p>
                           <div className="bg-slate-300 w-full h-14 rounded-t-2xl mt-2 flex flex-col items-center justify-center text-slate-800 shadow-inner">
                               <span className="text-xs font-black">{tabTop3[1].points_earned}</span>
                               <span className="text-[10px] font-bold uppercase opacity-60">pts</span>
@@ -230,7 +230,7 @@ export default function Ranking() {
                               <img src={tabTop3[0].avatar_url || 'https://via.placeholder.com/150'} className="w-20 h-20 rounded-full border-4 border-primary object-cover shadow-xl" />
                               <div className="absolute -top-2 -right-2 bg-primary text-on-primary w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shadow-lg">1</div>
                           </div>
-                          <p className="mt-2 text-xs font-black text-white uppercase text-center truncate w-full">{tabTop3[0].full_name.split(' ')[0]}</p>
+                          <p className="mt-2 text-xs font-black text-zinc-900 uppercase text-center truncate w-full">{tabTop3[0].full_name.split(' ')[0]}</p>
                           <div className="bg-primary w-full h-20 rounded-t-2xl mt-2 flex flex-col items-center justify-center text-on-primary shadow-2xl">
                               <span className="text-xl font-black">{tabTop3[0].points_earned}</span>
                               <span className="text-[10px] font-bold uppercase opacity-80">pontos</span>
@@ -245,7 +245,7 @@ export default function Ranking() {
                               <img src={tabTop3[2].avatar_url || 'https://via.placeholder.com/150'} className="w-14 h-14 rounded-full border-4 border-orange-400 object-cover shadow-lg" />
                               <div className="absolute -top-2 -right-2 bg-orange-400 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black">3</div>
                           </div>
-                          <p className="mt-2 text-[10px] font-bold text-white/70 uppercase text-center truncate w-full">{tabTop3[2].full_name.split(' ')[0]}</p>
+                          <p className="mt-2 text-[10px] font-bold text-zinc-700 uppercase text-center truncate w-full">{tabTop3[2].full_name.split(' ')[0]}</p>
                           <div className="bg-orange-400 w-full h-10 rounded-t-2xl mt-2 flex flex-col items-center justify-center text-white shadow-inner">
                               <span className="text-xs font-black">{tabTop3[2].points_earned}</span>
                               <span className="text-[10px] font-bold uppercase opacity-60">pts</span>
@@ -255,35 +255,35 @@ export default function Ranking() {
                     </div>
 
                     {/* List */}
-                    <div className="bg-zinc-900 rounded-[32px] border border-white/10 overflow-hidden mb-6">
-                      <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-                          <h3 className="font-headline font-black text-xs uppercase tracking-[0.2em] text-white/60">{tab.name}</h3>
+                    <div className="bg-white rounded-[32px] border border-zinc-100 overflow-hidden mb-6">
+                      <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
+                          <h3 className="font-headline font-black text-xs uppercase tracking-[0.2em] text-zinc-500">{tab.name}</h3>
                           <span className="text-[10px] font-black bg-primary/10 text-primary px-3 py-1 rounded-full uppercase">Ranking</span>
                       </div>
 
-                      <div className="divide-y divide-white/5">
+                      <div className="divide-y divide-zinc-100">
                           {tabOthers.length > 0 ? tabOthers.map((user, index) => {
                               const isMe = user.user_id === currentUser?.id;
                               return (
                                   <div key={user.user_id} className={`flex items-center gap-4 p-4 transition-colors ${isMe ? 'bg-primary/10' : ''}`}>
-                                      <span className="w-6 text-sm font-black text-white/40">#{index + 4}</span>
+                                      <span className="w-6 text-sm font-black text-zinc-400">#{index + 4}</span>
                                       <div className={`w-10 h-10 rounded-full overflow-hidden border-2 ${BORDER_COLORS[Number(user.wristband_level)] || 'border-white/10'} bg-primary/10`}>
                                           <img src={user.avatar_url || 'https://via.placeholder.com/150'} className="w-full h-full object-cover" />
                                       </div>
                                       <div className="flex-1">
-                                          <p className={`font-bold text-sm ${isMe ? 'text-primary' : 'text-white'}`}>
+                                          <p className={`font-bold text-sm ${isMe ? 'text-primary' : 'text-zinc-900'}`}>
                                               {user.full_name}
                                               {isMe && <span className="ml-2 text-[9px] font-black bg-primary/20 text-primary px-1.5 py-0.5 rounded italic">VOCÊ</span>}
                                           </p>
                                       </div>
                                       <div className="text-right">
-                                          <p className="text-sm font-black text-white">{user.points_earned}</p>
-                                          <p className="text-[9px] font-bold text-white/40 uppercase">pts</p>
+                                          <p className="text-sm font-black text-zinc-900">{user.points_earned}</p>
+                                          <p className="text-[9px] font-bold text-zinc-500 uppercase">pts</p>
                                       </div>
                                   </div>
                               );
                           }) : (
-                              <div className="p-10 text-center text-white/40 italic font-medium uppercase text-xs tracking-widest leading-loose">
+                              <div className="p-10 text-center text-zinc-400 italic font-medium uppercase text-xs tracking-widest leading-loose">
                                   {tabTop3.length === 0 ? 'Ninguém nesse nível ainda!' : 'Fim do ranking.'}
                               </div>
                           )}
