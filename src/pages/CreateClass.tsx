@@ -21,6 +21,7 @@ export default function CreateClass() {
   const [wristbandLevel, setWristbandLevel] = useState(1);
   const [isRecurring, setIsRecurring] = useState(false);
   const [finalDate, setFinalDate] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -93,6 +94,7 @@ export default function CreateClass() {
       // Atualizar lista de aulas
       const { data: classesData } = await supabase.from('classes').select('*').order('start_time', { ascending: true });
       setClasses(classesData || []);
+      setIsModalOpen(false); // Fechar modal
       
     } catch (error: any) {
       alert(error.message);
@@ -110,15 +112,31 @@ export default function CreateClass() {
       />
 
       <main className="relative min-h-screen pt-24 pb-8 px-6 max-w-7xl mx-auto">
-        <div className="mb-12">
-          <h2 className="font-headline font-extrabold text-4xl text-on-surface tracking-tight leading-none mb-2">Gestão de Aulas</h2>
-          <p className="text-on-surface-variant font-medium text-sm">PORTAL DO PROFESSOR</p>
+        <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="font-headline font-extrabold text-4xl text-on-surface tracking-tight leading-none mb-2">Gestão de Aulas</h2>
+            <p className="text-on-surface-variant font-medium text-sm">PORTAL DO PROFESSOR</p>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary text-black px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:bg-primary/90 active:scale-95 transition-all text-xs uppercase tracking-widest"
+          >
+            <span className="material-symbols-outlined text-sm">add</span>
+            Nova Aula
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Formulário (1/3 do espaço no desktop) */}
-          <div className="lg:col-span-1">
-            <div className="bg-zinc-900 rounded-[32px] border border-white/10 p-6 space-y-6">
+        {/* Modal Nova Aula */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+            <div className="bg-zinc-900 rounded-[32px] border border-white/10 p-6 space-y-6 max-w-lg w-full max-h-[90vh] overflow-y-auto no-scrollbar relative">
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+              
               <h3 className="font-headline font-black text-xl uppercase text-white mb-4">Nova Aula</h3>
               <form onSubmit={handleCreate} className="space-y-6">
                 <div>
@@ -230,15 +248,18 @@ export default function CreateClass() {
               </form>
             </div>
           </div>
+        )}
 
-          {/* Calendário (2/3 do espaço no desktop) */}
-          <div className="lg:col-span-2">
-            <MonthCalendar 
-              classes={classes} 
-              units={units}
-              onSelectDate={(selectedDate) => setDate(selectedDate)}
-            />
-          </div>
+        {/* Calendário (Largura Total) */}
+        <div className="w-full">
+          <MonthCalendar 
+            classes={classes} 
+            units={units}
+            onSelectDate={(selectedDate) => {
+              setDate(selectedDate);
+              setIsModalOpen(true); // Abrir modal ao clicar em uma data!
+            }}
+          />
         </div>
       </main>
     </div>
