@@ -78,7 +78,7 @@ export default function ManageTeachers() {
           alert(`O usuário '${existingProfile.full_name}' já estava cadastrado e foi promovido a Professor!`);
         } else {
           // Se não existe, criamos a conta normalmente
-          const { error } = await supabase.auth.signUp({
+          const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -90,6 +90,20 @@ export default function ManageTeachers() {
           });
 
           if (error) throw error;
+
+          if (data.user) {
+            // Cria o perfil na tabela profiles imediatamente para aparecer na lista
+            const { error: profileError } = await supabase.from('profiles').upsert({
+              id: data.user.id,
+              full_name: fullName,
+              role: 'teacher',
+              email: email,
+              plan_status: 'nenhum'
+            });
+
+            if (profileError) throw profileError;
+          }
+
           alert('Professor cadastrado com sucesso!');
         }
       }
