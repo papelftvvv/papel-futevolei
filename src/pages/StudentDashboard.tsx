@@ -321,7 +321,7 @@ export default function StudentDashboard() {
 
         const { data } = await supabase
           .from('classes')
-          .select('*, teacher:teacher_id(full_name, email), bookings(status), waitlist(status, student_id)')
+          .select('*, bookings(status), waitlist(status, student_id)')
           .gte('start_time', start.toISOString())
           .lte('start_time', end.toISOString())
           .order('start_time', { ascending: true });

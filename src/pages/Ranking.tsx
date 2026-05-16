@@ -53,24 +53,43 @@ export default function Ranking() {
           }
         }
 
-        // Busca todos os perfis (ou top 100) para poder filtrar por cor
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, full_name, avatar_url, points, wristband_level')
-          .order('points', { ascending: false })
+        // Busca os top 100 pontos da tabela loyalty_points
+        const { data: pointsData, error: pointsError } = await supabase
+          .from('loyalty_points')
+          .select('user_id, balance')
+          .order('balance', { ascending: false })
           .limit(100);
 
-        if (profilesError) throw profilesError;
+        if (pointsError) throw pointsError;
 
-        const formattedData = (profilesData || []).map(p => ({
-          user_id: p.id,
-          full_name: p.full_name,
-          avatar_url: p.avatar_url,
-          points_earned: p.points || 0,
-          wristband_level: p.wristband_level || 1
-        }));
+        if (pointsData && pointsData.length > 0) {
+          const userIds = pointsData.map(p => p.user_id);
+          
+          // Busca os perfis desses usuários
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, wristband_level')
+            .in('id', userIds);
 
-        setRanking(formattedData);
+          if (profilesError) throw profilesError;
+
+          const profilesMap = new Map((profilesData || []).map(p => [p.id, p]));
+
+          const formattedData = pointsData.map(p => {
+            const prof = profilesMap.get(p.user_id);
+            return {
+              user_id: p.user_id,
+              full_name: prof?.full_name || 'Desconhecido',
+              avatar_url: prof?.avatar_url,
+              points_earned: p.balance || 0,
+              wristband_level: prof?.wristband_level || 1
+            };
+          });
+
+          setRanking(formattedData);
+        } else {
+          setRanking([]);
+        }
       } catch (error) {
         console.error('Error fetching ranking:', error);
       } finally {
