@@ -814,7 +814,7 @@ export default function StudentDashboard() {
   const capitalizedMonth = selectedDate.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, (c) => c.toUpperCase());
 
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal PAPEL FUTEVÔLEI...</div>;
+  if (loading && !profile) return <div className="min-h-screen flex items-center justify-center font-bold text-secondary uppercase animate-pulse">Carregando portal PAPEL FUTEVÔLEI...</div>;
 
   return (
     <SportyBackground topHeight="25%">
@@ -1031,7 +1031,9 @@ export default function StudentDashboard() {
                 <Link to="/book-class" className="text-[10px] font-black flex items-center gap-1 uppercase tracking-widest text-primary">Explorar Tudo <span className="material-symbols-outlined text-sm">chevron_right</span></Link>
               </div>
               <div className="space-y-3">
-                {dayClasses.length > 0 ? dayClasses.map(cls => {
+                {loading ? (
+                    <div className="py-10 text-center animate-pulse text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Carregando aulas...</div>
+                ) : dayClasses.length > 0 ? dayClasses.map(cls => {
                     const isPast = new Date(cls.start_time) < new Date();
                     const isBooked = bookings.some(b => b.classes.id === cls.id && b.status === 'agendado');
                     const bookedCount = (cls.bookings || []).filter((b: any) => b.status === 'agendado').length;
@@ -1080,7 +1082,7 @@ export default function StudentDashboard() {
                        <p className="text-on-surface-variant/40 text-[10px] font-black uppercase tracking-widest italic">Nenhuma aula para este dia.</p>
                        <button 
                          onClick={findNextDayWithClasses}
-                         className="mt-2 bg-primary text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 mx-auto shadow-md hover:bg-primary/90 active:scale-95 transition-all text-[10px] uppercase tracking-widest"
+                         className="mt-2 bg-primary text-on-primary px-4 py-2 rounded-xl font-bold flex items-center gap-2 mx-auto shadow-md hover:bg-primary/90 active:scale-95 transition-all text-[10px] uppercase tracking-widest"
                        >
                          <span className="material-symbols-outlined text-sm">search</span>
                          Procurar próximo dia com aulas
