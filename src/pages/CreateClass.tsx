@@ -63,7 +63,6 @@ export default function CreateClass() {
 
         while (currentStartDate <= endDateObj) {
           classesToInsert.push({
-            teacher_id: user.id,
             name,
             start_time: currentStartDate.toISOString(),
             capacity,
@@ -77,7 +76,6 @@ export default function CreateClass() {
         }
       } else {
         classesToInsert.push({
-          teacher_id: user.id,
           name,
           start_time: startDateTime.toISOString(),
           capacity,
