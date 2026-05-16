@@ -162,7 +162,7 @@ export default function Profile() {
 
     } catch (error: any) {
       console.error('Erro no upload:', error);
-      alert('Erro ao enviar foto. Verifique se a imagem é pequena ou tente outra.');
+      alert(`Erro ao enviar foto: ${error.message || 'Erro desconhecido'}. Verifique se a imagem é válida ou se há permissão no Supabase.`);
     } finally {
       setUploading(false);
     }
