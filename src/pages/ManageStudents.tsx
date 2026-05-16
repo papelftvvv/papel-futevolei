@@ -251,7 +251,7 @@ export default function ManageStudents() {
 
         {/* Success Toast */}
         {successMsg && (
-          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-sm animate-bounce">
+          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[250] bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-sm animate-bounce border border-green-500">
             {successMsg}
           </div>
         )}
