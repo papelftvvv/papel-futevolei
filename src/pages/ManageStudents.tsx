@@ -100,7 +100,6 @@ export default function ManageStudents() {
         .from('profiles')
         .update({
           full_name: editingStudent.full_name,
-          email: editingStudent.email,
           phone: editingStudent.phone,
           plan_status: editingStudent.plan_status,
           wristband_level: editingStudent.wristband_level
