@@ -36,7 +36,8 @@ export default function Ranking() {
     async function fetchData() {
       try {
         setLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
         if (user) {
           setCurrentUser(user);
           const { data: profileData } = await supabase
