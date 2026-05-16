@@ -29,6 +29,7 @@ import UpdatePassword from './pages/UpdatePassword';
 import ManageMarketing from './pages/ManageMarketing';
 import Ranking from './pages/Ranking';
 import MyBookings from './pages/MyBookings';
+import ScheduleView from './pages/ScheduleView';
 
 import { UnitProvider } from './contexts/UnitContext';
 
@@ -67,6 +68,7 @@ export default function App() {
           <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/manage-marketing" element={<ManageMarketing />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/schedule" element={<ScheduleView />} />
         </Routes>
       </Router>
     </UnitProvider>
