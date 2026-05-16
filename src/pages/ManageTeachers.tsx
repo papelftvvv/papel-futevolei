@@ -51,20 +51,45 @@ export default function ManageTeachers() {
         if (error) throw error;
         alert('Professor atualizado com sucesso!');
       } else {
-        // Lógica de Criação
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-              role: 'teacher'
-            }
-          }
-        });
+        // Lógica de Criação ou Promoção
+        // Primeiro verificamos se o usuário já existe na tabela profiles pelo NOME
+        // Buscamos pelo nome porque o e-mail não é salvo na tabela profiles no cadastro inicial do app
+        const { data: existingProfile, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, role')
+          .eq('full_name', fullName)
+          .maybeSingle();
 
-        if (error) throw error;
-        alert('Professor cadastrado! Ele deve confirmar o e-mail para ativar a conta.');
+        if (profileError) throw profileError;
+
+        if (existingProfile) {
+          // Se ele já existe, atualizamos a role dele para 'teacher' e salvamos o e-mail
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ 
+              role: 'teacher',
+              email: email 
+            })
+            .eq('id', existingProfile.id);
+
+          if (updateError) throw updateError;
+          alert('Este usuário já estava cadastrado como aluno e foi promovido a Professor!');
+        } else {
+          // Se não existe, criamos a conta normalmente
+          const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: fullName,
+                role: 'teacher'
+              }
+            }
+          });
+
+          if (error) throw error;
+          alert('Professor cadastrado! Ele deve confirmar o e-mail para ativar a conta.');
+        }
       }
 
       // Reset form
