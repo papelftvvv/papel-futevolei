@@ -63,13 +63,10 @@ export default function CreateClass() {
         let currentStartDate = new Date(startDateTime);
 
         while (currentStartDate <= endDateObj) {
-          const currentEndDate = new Date(currentStartDate.getTime() + 60 * 60000); // 1h duration
-          
           classesToInsert.push({
             teacher_id: user.id,
             name,
             start_time: currentStartDate.toISOString(),
-            end_time: currentEndDate.toISOString(),
             capacity,
             court,
             unit_id: unitId,
@@ -80,12 +77,10 @@ export default function CreateClass() {
           currentStartDate.setDate(currentStartDate.getDate() + 7);
         }
       } else {
-        const endDateTime = new Date(startDateTime.getTime() + 60 * 60000); // 1h duration
         classesToInsert.push({
           teacher_id: user.id,
           name,
           start_time: startDateTime.toISOString(),
-          end_time: endDateTime.toISOString(),
           capacity,
           court,
           unit_id: unitId,
