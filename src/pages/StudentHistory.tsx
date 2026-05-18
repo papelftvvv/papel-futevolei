@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
 import TopAppBar from '../components/TopAppBar';
@@ -131,7 +131,6 @@ export default function StudentHistory() {
       <div className="bg-surface font-body text-on-surface antialiased min-h-screen pb-32 relative selection:bg-primary/30">
       <TopAppBar 
         title="MEU HISTÓRICO" 
-        showBackButton 
         avatarSrc={profile?.avatar_url}
         avatarAlt={profile?.full_name}
       />

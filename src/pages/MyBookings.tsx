@@ -187,7 +187,6 @@ export default function MyBookings() {
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body relative overflow-hidden">
         <TopAppBar 
           title="HISTÓRICO" 
-          showBackButton 
           avatarSrc={profile?.avatar_url} 
           avatarAlt={profile?.full_name} 
         />
