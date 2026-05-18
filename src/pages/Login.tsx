@@ -19,15 +19,7 @@ export default function Login() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setLoading(true);
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profile?.role === 'admin') navigate('/admin');
-        else if (profile?.role === 'teacher') navigate('/teacher');
-        else navigate('/student');
+        navigate('/student');
       }
     }
     checkSession();
@@ -50,19 +42,7 @@ export default function Login() {
     }
 
     if (data.user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
-
-      if (profile?.role === 'admin') {
-        navigate('/admin');
-      } else if (profile?.role === 'teacher') {
-        navigate('/teacher');
-      } else {
-        navigate('/student');
-      }
+      navigate('/student');
     }
   };
 
