@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
@@ -44,7 +44,7 @@ export default function Ranking() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // 0 = Geral, 1 = Branco, etc.
-  const containerRef = useRef<HTMLDivElement>(null);
+
 
   // State para Grupos Privados
   const [groups, setGroups] = useState<any[]>([]);
@@ -56,6 +56,7 @@ export default function Ranking() {
   const [isViewingGroup, setIsViewingGroup] = useState(false);
   const [selectedGroupName, setSelectedGroupName] = useState('');
 
+  // Busca dados do ranking apenas uma vez ao montar o componente
   useEffect(() => {
     async function fetchData() {
       try {
@@ -122,6 +123,11 @@ export default function Ranking() {
       }
     }
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Busca os grupos do usuário somente quando currentUser ficar disponível
+  useEffect(() => {
     if (currentUser) {
       fetchGroups();
     }
@@ -291,28 +297,7 @@ export default function Ranking() {
     { id: 9, name: 'Grupos', color: 'bg-zinc-800 text-white' }
   ];
 
-  const handleScroll = () => {
-    if (!containerRef.current) return;
-    const children = containerRef.current.children;
-    const containerCenter = containerRef.current.scrollLeft + containerRef.current.clientWidth / 2;
-    
-    let closestIndex = 0;
-    let minDistance = Infinity;
-    
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      const childCenter = child.offsetLeft + child.clientWidth / 2;
-      const distance = Math.abs(containerCenter - childCenter);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = i;
-      }
-    }
-    
-    if (tabs[closestIndex] && activeTab !== tabs[closestIndex].id) {
-      setActiveTab(tabs[closestIndex].id);
-    }
-  };
+
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-white uppercase animate-pulse bg-black">Calculando Pódio PAPEL FUTEVÔLEI...</div>;
 
@@ -337,37 +322,29 @@ export default function Ranking() {
             {tabs.map(tab => (
               <button
                 key={tab.id}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border border-zinc-200
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border
+                  ${tab.color}
                   ${activeTab === tab.id 
-                    ? `${tab.color} shadow-lg scale-105` 
-                    : 'bg-zinc-100 text-zinc-600'
+                    ? 'shadow-lg scale-110 ring-2 ring-white/40 border-transparent' 
+                    : 'opacity-50 border-transparent hover:opacity-80'
                   }
                 `}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  const el = document.getElementById(`ranking-list-${tab.id}`);
-                  el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                }}
+                onClick={() => setActiveTab(tab.id)}
               >
                 {tab.name}
               </button>
             ))}
           </div>
 
-          {/* Horizontal Scroll Container */}
-          <div 
-            ref={containerRef}
-            onScroll={handleScroll}
-            className="overflow-x-auto flex snap-x snap-mandatory no-scrollbar px-6 gap-6"
-          >
-            {tabs.map(tab => {
-                if (tab.id === 9) {
+          {/* Conteúdo do Ranking Selecionado */}
+          <div className="px-6 space-y-6">
+            {(() => {
+                const activeTabObj = tabs.find(t => t.id === activeTab);
+                if (!activeTabObj) return null;
+
+                if (activeTabObj.id === 9) {
                   return (
-                    <div 
-                      key={tab.id} 
-                      id={`ranking-list-${tab.id}`}
-                      className="w-[calc(100vw-3rem)] max-w-2xl shrink-0 snap-center space-y-6"
-                    >
+                    <div className="max-w-2xl mx-auto space-y-6">
                       {/* UI de Grupos */}
                       {isViewingGroup ? (
                         <div className={`${activeUnit?.slug === 'ctl' ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-zinc-100'} rounded-3xl p-6 shadow-xl border space-y-4`}>
@@ -522,19 +499,15 @@ export default function Ranking() {
                   );
                 }
 
-                const filteredRanking = tab.id === 0 
+                const filteredRanking = activeTabObj.id === 0 
                   ? ranking 
-                  : ranking.filter(u => Number(u.wristband_level) === tab.id);
+                  : ranking.filter(u => Number(u.wristband_level) === activeTabObj.id);
                 
                 const tabTop3 = filteredRanking.slice(0, 3);
                 const tabOthers = filteredRanking.slice(3);
 
                 return (
-                  <div 
-                    key={tab.id} 
-                    id={`ranking-list-${tab.id}`}
-                    className="w-[calc(100vw-3rem)] max-w-2xl shrink-0 snap-center space-y-6"
-                  >
+                  <div className="max-w-2xl mx-auto space-y-6">
                     {/* Podium */}
                     <div className="flex items-end justify-center gap-2 pt-8 min-h-[180px]">
                       {/* 2nd Place */}
@@ -589,7 +562,7 @@ export default function Ranking() {
                     {/* List */}
                     <div className={`${activeUnit?.slug === 'ctl' ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-zinc-100'} rounded-[32px] border overflow-hidden mb-6`}>
                       <div className={`p-4 border-b flex justify-between items-center ${activeUnit?.slug === 'ctl' ? 'bg-zinc-700/50 border-zinc-700' : 'bg-zinc-50 border-zinc-100'}`}>
-                          <h3 className={`font-headline font-black text-xs uppercase tracking-[0.2em] ${activeUnit?.slug === 'ctl' ? 'text-zinc-300' : 'text-zinc-500'}`}>{tab.name}</h3>
+                          <h3 className={`font-headline font-black text-xs uppercase tracking-[0.2em] ${activeUnit?.slug === 'ctl' ? 'text-zinc-300' : 'text-zinc-500'}`}>{activeTabObj.name}</h3>
                           <span className="text-[10px] font-black bg-primary/10 text-primary px-3 py-1 rounded-full uppercase">Ranking</span>
                       </div>
 
@@ -623,7 +596,7 @@ export default function Ranking() {
                     </div>
                   </div>
                 );
-            })}
+            })()}
           </div>
 
           {/* Mini Info Card */}
