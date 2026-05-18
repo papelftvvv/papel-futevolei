@@ -274,7 +274,7 @@ export default function StudentDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [navigate, selectedDate, activeUnit]);
+  }, [navigate, activeUnit]);
 
   useEffect(() => {
     fetchData();

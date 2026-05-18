@@ -10,7 +10,7 @@ export default function TeacherNavbar({ activePage }: TeacherNavbarProps) {
   const inactiveClass = "flex flex-col items-center justify-center text-on-surface-variant opacity-70 px-4 py-2 hover:text-primary transition-colors";
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#FFF8F3]/70 backdrop-blur-md z-50 rounded-t-3xl shadow-[0px_-10px_30px_rgba(164,60,18,0.05)]">
+    <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-zinc-900 z-50 rounded-t-3xl shadow-[0px_-10px_30px_rgba(0,0,0,0.3)]">
       <Link to="/teacher" className={activePage === 'home' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined" style={activePage === 'home' ? { fontVariationSettings: "'FILL' 1" } : undefined}>home</span>
         <span className="font-label text-[10px] font-semibold uppercase tracking-wider mt-0.5">Início</span>

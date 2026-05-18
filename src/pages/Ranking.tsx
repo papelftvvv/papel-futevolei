@@ -414,10 +414,10 @@ export default function Ranking() {
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: "tween", ease: [0.4, 0, 0.2, 1], duration: 0.35 },
-                  opacity: { type: "tween", ease: "easeInOut", duration: 0.3 }
+                  x: { type: "tween", ease: [0.4, 0, 0.2, 1], duration: 0.25 },
+                  opacity: { type: "tween", ease: "easeInOut", duration: 0.2 }
                 }}
-                className="px-6 space-y-6 w-full"
+                className="px-6 space-y-6 w-full transform-gpu will-change-transform"
               >
             {(() => {
                 const activeTabObj = tabs.find(t => t.id === activeTab);
