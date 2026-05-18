@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
 import StudentNavbar from '../components/StudentNavbar';
 import SportyBackground from '../components/SportyBackground';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useUnit } from '../contexts/UnitContext';
 
 interface RankingUser {
@@ -36,6 +36,21 @@ const BORDER_COLORS: { [key: number]: string } = {
   8: 'border-[#D4AF37]'
 };
 
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? '100%' : '-100%',
+    opacity: 0
+  }),
+  center: {
+    x: 0,
+    opacity: 1
+  },
+  exit: (dir: number) => ({
+    x: dir < 0 ? '100%' : '-100%',
+    opacity: 0
+  })
+};
+
 export default function Ranking() {
   const navigate = useNavigate();
   const { activeUnit } = useUnit();
@@ -46,6 +61,7 @@ export default function Ranking() {
   const [activeTab, setActiveTab] = useState(0); // 0 = Geral, 1 = Branco, etc.
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [direction, setDirection] = useState(1);
 
 
   // State para Grupos Privados
@@ -319,6 +335,7 @@ export default function Ranking() {
 
     if (isLeftSwipe) {
       // Swipe para a esquerda -> avança para a próxima aba/cor
+      setDirection(1);
       setActiveTab((prev) => {
         const nextIdx = tabs.findIndex(t => t.id === prev) + 1;
         if (nextIdx < tabs.length) {
@@ -328,6 +345,7 @@ export default function Ranking() {
       });
     } else if (isRightSwipe) {
       // Swipe para a direita -> volta para a aba anterior
+      setDirection(-1);
       setActiveTab((prev) => {
         const prevIdx = tabs.findIndex(t => t.id === prev) - 1;
         if (prevIdx >= 0) {
@@ -375,7 +393,10 @@ export default function Ranking() {
                     : 'opacity-50 border-transparent hover:opacity-80'
                   }
                 `}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  setDirection(tab.id > activeTab ? 1 : -1);
+                  setActiveTab(tab.id);
+                }}
               >
                 {tab.name}
               </button>
@@ -383,7 +404,21 @@ export default function Ranking() {
           </div>
 
           {/* Conteúdo do Ranking Selecionado */}
-          <div className="px-6 space-y-6">
+          <div className="overflow-hidden w-full min-h-[60vh] relative">
+            <AnimatePresence initial={false} custom={direction} mode="popLayout">
+              <motion.div
+                key={activeTab}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
+                className="px-6 space-y-6 w-full"
+              >
             {(() => {
                 const activeTabObj = tabs.find(t => t.id === activeTab);
                 if (!activeTabObj) return null;
@@ -643,6 +678,8 @@ export default function Ranking() {
                   </div>
                 );
             })()}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Mini Info Card */}
