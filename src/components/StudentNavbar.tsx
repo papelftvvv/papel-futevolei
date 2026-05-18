@@ -28,10 +28,6 @@ export default function StudentNavbar({ activePage }: StudentNavbarProps) {
         <span className="material-symbols-outlined text-sm" style={activePage === 'ranking' ? { fontVariationSettings: "'FILL' 1" } : undefined}>workspace_premium</span>
         <span style={labelStyle}>Ranking</span>
       </Link>
-      <Link to="/profile" className={activePage === 'perfil' ? activeClass : inactiveClass}>
-        <span className="material-symbols-outlined text-sm" style={activePage === 'perfil' ? { fontVariationSettings: "'FILL' 1" } : undefined}>person</span>
-        <span style={labelStyle}>Perfil</span>
-      </Link>
     </nav>
   );
 }

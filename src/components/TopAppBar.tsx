@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUnit } from '../contexts/UnitContext';
+import { supabase } from '../lib/supabase';
 
 interface TopAppBarProps {
   title?: string;
@@ -38,6 +39,29 @@ export default function TopAppBar({
   const navigate = useNavigate();
   const { activeUnit, units, setUnitBySlug } = useUnit();
   const [showUnitSelector, setShowUnitSelector] = React.useState(false);
+  const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+  const [userRole, setUserRole] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function getUserRole() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (data) {
+            setUserRole(data.role);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching role in TopAppBar:', error);
+      }
+    }
+    getUserRole();
+  }, []);
 
   const handleRefresh = () => {
     window.location.reload();
@@ -87,16 +111,76 @@ export default function TopAppBar({
             <span className="material-symbols-outlined font-bold text-xl">sync</span>
           </button>
 
-          <div 
-            className="w-10 h-10 rounded-full overflow-hidden border-2 shrink-0 shadow-sm"
-            style={{ borderColor: getWristbandColor(wristbandLevel) }}
-          >
-            <img
-              alt={avatarAlt}
-              className="w-full h-full object-cover"
-              src={displayAvatar}
-              referrerPolicy="no-referrer"
-            />
+          <div className="relative">
+            <button 
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="w-10 h-10 rounded-full overflow-hidden border-2 shrink-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+              style={{ borderColor: getWristbandColor(wristbandLevel) }}
+            >
+              <img
+                alt={avatarAlt}
+                className="w-full h-full object-cover"
+                src={displayAvatar}
+                referrerPolicy="no-referrer"
+              />
+            </button>
+            
+            {showProfileMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[1px]" 
+                  onClick={() => setShowProfileMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-2xl shadow-xl z-50 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {userRole === 'admin' && (
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate('/admin');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-black text-black hover:bg-zinc-100 rounded-xl transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-lg text-primary font-black">admin_panel_settings</span>
+                      Administração
+                    </button>
+                  )}
+                  {userRole === 'teacher' && (
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate('/teacher');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-black text-black hover:bg-zinc-100 rounded-xl transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-lg text-primary font-black">school</span>
+                      Painel Professor
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      navigate('/profile');
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-black text-black hover:bg-zinc-100 rounded-xl transition-all active:scale-[0.98] cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-lg text-primary font-black">person</span>
+                    Perfil
+                  </button>
+                  
+                  <button
+                    onClick={async () => {
+                      setShowProfileMenu(false);
+                      await supabase.auth.signOut();
+                      navigate('/');
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-bold text-error hover:bg-error/10 rounded-xl transition-all active:scale-[0.98] border-t border-outline-variant/30 mt-1 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-lg">logout</span>
+                    Sair da Conta
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>

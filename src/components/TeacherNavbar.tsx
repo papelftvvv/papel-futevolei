@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface TeacherNavbarProps {
@@ -22,10 +22,6 @@ export default function TeacherNavbar({ activePage }: TeacherNavbarProps) {
       <Link to="/manage-plans" className={activePage === 'planos' ? activeClass : inactiveClass}>
         <span className="material-symbols-outlined" style={activePage === 'planos' ? { fontVariationSettings: "'FILL' 1" } : undefined}>payments</span>
         <span className="font-label text-[10px] font-semibold uppercase tracking-wider mt-0.5">Planos</span>
-      </Link>
-      <Link to="/profile" className={activePage === 'perfil' ? activeClass : inactiveClass}>
-        <span className="material-symbols-outlined" style={activePage === 'perfil' ? { fontVariationSettings: "'FILL' 1" } : undefined}>person</span>
-        <span className="font-label text-[10px] font-semibold uppercase tracking-wider mt-0.5">Perfil</span>
       </Link>
     </nav>
   );
