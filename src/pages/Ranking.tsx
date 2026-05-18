@@ -44,6 +44,8 @@ export default function Ranking() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // 0 = Geral, 1 = Branco, etc.
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
 
   // State para Grupos Privados
@@ -297,6 +299,45 @@ export default function Ranking() {
     { id: 9, name: 'Grupos', color: 'bg-zinc-800 text-white' }
   ];
 
+  // Mínimo de pixels percorridos para ser considerado um swipe
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null); // reseta para evitar cliques acidentais
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      // Swipe para a esquerda -> avança para a próxima aba/cor
+      setActiveTab((prev) => {
+        const nextIdx = tabs.findIndex(t => t.id === prev) + 1;
+        if (nextIdx < tabs.length) {
+          return tabs[nextIdx].id;
+        }
+        return prev;
+      });
+    } else if (isRightSwipe) {
+      // Swipe para a direita -> volta para a aba anterior
+      setActiveTab((prev) => {
+        const prevIdx = tabs.findIndex(t => t.id === prev) - 1;
+        if (prevIdx >= 0) {
+          return tabs[prevIdx].id;
+        }
+        return prev;
+      });
+    }
+  };
+
 
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-white uppercase animate-pulse bg-black">Calculando Pódio PAPEL FUTEVÔLEI...</div>;
@@ -306,7 +347,12 @@ export default function Ranking() {
       <div className={`pb-32 min-h-screen font-body relative ${activeUnit?.slug === 'ctl' ? 'text-white bg-zinc-900' : 'text-zinc-900 bg-slate-50'}`}>
         <TopAppBar title="RANKING MENSAL" avatarSrc={profile?.avatar_url} avatarAlt={profile?.full_name || "Perfil"} wristbandLevel={profile?.wristband_level} />
 
-        <main className="mt-20 space-y-6">
+        <main 
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="mt-20 space-y-6 select-none"
+        >
           {/* Header Title */}
           <div className="text-center space-y-2 px-6">
             <h2 className={`font-headline font-black text-4xl uppercase italic tracking-tighter shadow-sm ${activeUnit?.slug === 'ctl' ? 'text-white' : 'text-zinc-900'}`}>
