@@ -38,7 +38,7 @@ const BORDER_COLORS: { [key: number]: string } = {
 
 const slideVariants = {
   enter: (dir: number) => ({
-    x: dir > 0 ? '100%' : '-100%',
+    x: dir > 0 ? 80 : -80,
     opacity: 0
   }),
   center: {
@@ -46,7 +46,7 @@ const slideVariants = {
     opacity: 1
   },
   exit: (dir: number) => ({
-    x: dir < 0 ? '100%' : '-100%',
+    x: dir < 0 ? -80 : 80,
     opacity: 0
   })
 };
@@ -414,8 +414,8 @@ export default function Ranking() {
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 }
+                  x: { type: "tween", ease: [0.4, 0, 0.2, 1], duration: 0.35 },
+                  opacity: { type: "tween", ease: "easeInOut", duration: 0.3 }
                 }}
                 className="px-6 space-y-6 w-full"
               >
