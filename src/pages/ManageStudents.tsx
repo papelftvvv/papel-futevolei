@@ -237,7 +237,7 @@ export default function ManageStudents() {
 
   return (
     <div className="bg-black font-body text-white antialiased min-h-screen pb-32">
-      <TopAppBar title="GESTÃO DE ALUNOS" showBackButton />
+      <TopAppBar title="GESTÃO DE ALUNOS" showBackButton backPath="/admin" />
 
       <main className="pt-24 px-6 max-w-4xl mx-auto space-y-8">
         {/* Header */}

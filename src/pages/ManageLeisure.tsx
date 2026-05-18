@@ -366,7 +366,7 @@ export default function ManageLeisure() {
   return (
     <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
-        <TopAppBar title="GESTÃO DE LAZER" showBackButton />
+        <TopAppBar title="GESTÃO DE LAZER" showBackButton backPath="/admin" />
 
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8 relative z-10">
           {/* Header Section */}

@@ -153,7 +153,7 @@ export default function ManageTeachers() {
     <div className="bg-zinc-950 text-white min-h-screen pb-12 relative overflow-hidden">
       <SportyBackground topHeight="25%" />
       
-      <TopAppBar title="GESTÃO DE PROFESSORES" showBackButton />
+      <TopAppBar title="GESTÃO DE PROFESSORES" showBackButton backPath="/admin" />
 
       <main className="mt-24 px-6 max-w-4xl mx-auto space-y-12 relative z-10">
         {/* Formulário de Cadastro/Edição */}

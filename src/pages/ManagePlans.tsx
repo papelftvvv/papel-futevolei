@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 
@@ -229,7 +229,7 @@ export default function ManagePlans() {
 
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
-      <TopAppBar title="GESTÃO DE PLANOS" showBackButton />
+      <TopAppBar title="GESTÃO DE PLANOS" showBackButton backPath="/admin" />
 
       <main className="pt-24 px-6 max-w-2xl mx-auto space-y-12">
         

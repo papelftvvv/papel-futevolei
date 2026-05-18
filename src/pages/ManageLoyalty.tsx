@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TopAppBar from '../components/TopAppBar';
 import { supabase } from '../lib/supabase';
 import SportyBackground from '../components/SportyBackground';
@@ -192,7 +192,7 @@ export default function ManageLoyalty() {
   return (
     <SportyBackground topHeight="25%">
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
-        <TopAppBar title="GESTÃO DE FIDELIDADE" showBackButton />
+        <TopAppBar title="GESTÃO DE FIDELIDADE" showBackButton backPath="/admin" />
 
         <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8 relative z-10">
           <section className="space-y-1">

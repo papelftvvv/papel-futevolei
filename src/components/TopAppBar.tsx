@@ -8,6 +8,7 @@ interface TopAppBarProps {
   avatarAlt?: string;
   showBackButton?: boolean;
   wristbandLevel?: number;
+  backPath?: string;
 }
 
 const getWristbandColor = (level?: number) => {
@@ -31,7 +32,8 @@ export default function TopAppBar({
   avatarSrc, 
   avatarAlt = 'Perfil',
   showBackButton = false,
-  wristbandLevel
+  wristbandLevel,
+  backPath
 }: TopAppBarProps) {
   const navigate = useNavigate();
   const { activeUnit, units, setUnitBySlug } = useUnit();
@@ -50,7 +52,13 @@ export default function TopAppBar({
         <div className="flex items-center gap-2 overflow-hidden">
           {showBackButton ? (
             <button 
-              onClick={() => navigate(-1)} 
+              onClick={() => {
+                if (backPath) {
+                  navigate(backPath);
+                } else {
+                  navigate(-1);
+                }
+              }} 
               className="w-10 h-10 -ml-2 flex items-center justify-center text-on-surface active:scale-95 transition-transform shrink-0"
             >
               <span className="material-symbols-outlined font-black">arrow_back</span>

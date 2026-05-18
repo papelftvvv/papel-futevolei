@@ -109,6 +109,7 @@ export default function CreateClass() {
         title="PAPEL FUTEVÔLEI BEACH CLUB" 
         avatarSrc={profile?.avatar_url || undefined}
         showBackButton
+        backPath="/admin"
       />
 
       <main className="relative min-h-screen pt-24 pb-8 px-6 max-w-7xl mx-auto">

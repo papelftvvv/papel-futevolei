@@ -118,7 +118,7 @@ export default function ManageApprovals() {
   return (
     <SportyBackground topHeight="25%">
       <div className="font-body text-white antialiased min-h-screen pb-32 relative">
-      <TopAppBar title="Aprovações de Planos" showBackButton />
+      <TopAppBar title="Aprovações de Planos" showBackButton backPath="/admin" />
 
       <main className="pt-24 px-6 max-w-2xl mx-auto relative">
         <div className="mb-10">

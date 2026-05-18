@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
@@ -13,6 +13,7 @@ export default function ClassManagement() {
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [showEditClass, setShowEditClass] = useState(false);
   const [editFormData, setEditFormData] = useState<any>({});
+  const [userRole, setUserRole] = useState<string>('teacher');
 
   useEffect(() => {
     fetchClassData();
@@ -21,6 +22,19 @@ export default function ClassManagement() {
 
   async function fetchClassData() {
     try {
+      // Obter o perfil/role do usuário atual
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        if (profileData?.role) {
+          setUserRole(profileData.role);
+        }
+      }
+
       const { data: classData, error: classError } = await supabase
         .from('classes')
         .select('*')
@@ -56,7 +70,7 @@ export default function ClassManagement() {
       setStudents(bookingData || []);
     } catch (error: any) {
       alert(error.message);
-      navigate('/teacher');
+      navigate(userRole === 'admin' ? '/admin' : '/teacher');
     } finally {
       setLoading(false);
     }
@@ -147,7 +161,7 @@ export default function ClassManagement() {
 
   return (
     <div className="bg-surface min-h-screen pb-32">
-      <TopAppBar title="GESTÃO DA TURMA" showBackButton />
+      <TopAppBar title="GESTÃO DA TURMA" showBackButton backPath={userRole === 'admin' ? '/admin' : '/teacher'} />
 
       <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8">
         <header className="bg-white p-8 rounded-[40px] shadow-sm border border-primary-container/10 relative overflow-hidden group">

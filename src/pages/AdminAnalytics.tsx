@@ -79,7 +79,7 @@ export default function AdminAnalytics() {
 
   return (
     <div className="bg-black font-body text-white antialiased min-h-screen pb-32">
-      <TopAppBar title="INDICADORES" showBackButton />
+      <TopAppBar title="INDICADORES" showBackButton backPath="/admin" />
 
       <main className="pt-24 px-6 max-w-4xl mx-auto space-y-8">
         <header>

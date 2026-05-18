@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
 import SportyBackground from '../components/SportyBackground';
@@ -125,7 +125,7 @@ export default function ManageMarketing() {
     return (
         <SportyBackground topHeight="25%">
             <div className="pb-32 min-h-screen font-body relative">
-                <TopAppBar title="ADMIN: MARKETING" />
+                <TopAppBar title="ADMIN: MARKETING" showBackButton backPath="/admin" />
 
                 <main className="mt-20 px-6 max-w-2xl mx-auto space-y-10">
                     {/* Novo: Seção de Notificação Push Global */}

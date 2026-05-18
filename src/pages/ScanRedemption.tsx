@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { supabase } from '../lib/supabase';
 import TopAppBar from '../components/TopAppBar';
@@ -166,7 +166,7 @@ export default function ScanRedemption() {
     return (
         <SportyBackground topHeight="25%">
             <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden">
-                <TopAppBar title="CAIXA - SCANNER DE RESGATE" showBackButton />
+                <TopAppBar title="CAIXA - SCANNER DE RESGATE" showBackButton backPath="/admin" />
 
                 <main className="mt-20 px-6 max-w-2xl mx-auto space-y-8 relative z-10">
                     <section className="space-y-1">
