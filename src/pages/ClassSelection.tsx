@@ -300,7 +300,6 @@ export default function ClassSelection() {
       <div className="bg-surface text-on-surface min-h-screen pb-32 font-body selection:bg-primary/30 relative overflow-hidden text-sm">
       <TopAppBar 
         title="CHECK-IN" 
-        showBackButton 
         avatarSrc={profile?.avatar_url} 
         avatarAlt={profile?.full_name} 
       />
