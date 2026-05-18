@@ -93,3 +93,8 @@
   @apply bg-white/40;
 }
 
+/* Fix to push main content below dynamic notch/status bar on notch screens */
+main.mt-20 {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+

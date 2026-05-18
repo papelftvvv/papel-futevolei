@@ -72,7 +72,7 @@ export default function TopAppBar({
 
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-6 h-16 transition-colors duration-500">
+      <header className="fixed top-0 left-0 w-full z-50 bg-surface/95 backdrop-blur-md border-b border-outline-variant flex justify-between items-end px-6 pb-3 pt-[env(safe-area-inset-top,0px)] h-[calc(4rem+env(safe-area-inset-top,0px))] transition-colors duration-500">
         <div className="flex items-center gap-2 overflow-hidden">
           {showBackButton && (
             <button 
