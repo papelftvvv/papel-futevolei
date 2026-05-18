@@ -74,7 +74,7 @@ export default function TopAppBar({
     <>
       <header className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-6 h-16 transition-colors duration-500">
         <div className="flex items-center gap-2 overflow-hidden">
-          {showBackButton ? (
+          {showBackButton && (
             <button 
               onClick={() => {
                 if (backPath) {
@@ -87,18 +87,25 @@ export default function TopAppBar({
             >
               <span className="material-symbols-outlined font-black">arrow_back</span>
             </button>
-          ) : (
-            <span className="material-symbols-outlined text-primary shrink-0">sports_volleyball</span>
           )}
-          <div className="flex flex-col items-start">
-            <h1 className="font-headline font-black tracking-[0.1em] text-on-surface text-[10px] uppercase truncate max-w-[200px]">
-              {displayTitle}
-            </h1>
-            {activeUnit && (
-              <span className="text-[8px] font-black text-primary uppercase tracking-widest px-1 bg-primary/10 rounded">
-                {activeUnit.name}
-              </span>
+          
+          <div 
+            onClick={() => navigate('/student')}
+            className="flex items-center gap-2 cursor-pointer active:scale-[0.98] transition-all hover:opacity-80 overflow-hidden"
+          >
+            {!showBackButton && (
+              <span className="material-symbols-outlined text-primary shrink-0">sports_volleyball</span>
             )}
+            <div className="flex flex-col items-start overflow-hidden">
+              <h1 className="font-headline font-black tracking-[0.1em] text-on-surface text-[10px] uppercase truncate max-w-[200px]">
+                {displayTitle}
+              </h1>
+              {activeUnit && (
+                <span className="text-[8px] font-black text-primary uppercase tracking-widest px-1 bg-primary/10 rounded">
+                  {activeUnit.name}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
